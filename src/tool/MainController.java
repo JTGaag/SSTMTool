@@ -1,5 +1,6 @@
 package tool;
 
+import data.controller.DomParser;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -11,6 +12,7 @@ import java.util.Random;
 public class MainController {
     public Label helloWorld;
     public TextArea textArea;
+    private DomParser domParser = new DomParser();
 
     public void sayHelloWorld(ActionEvent actionEvent) {
         int random = (new Random()).nextInt(10000);
@@ -41,6 +43,10 @@ public class MainController {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            //Use DOM Parser
+            domParser.setFile(selectedFile);
+            domParser.readFile();
 
         }
     }

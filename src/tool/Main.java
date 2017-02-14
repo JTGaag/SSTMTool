@@ -12,7 +12,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("mainWindow.fxml"));
         primaryStage.setTitle("SSTM Tool Main Window");
-        primaryStage.setScene(new Scene(root, 1600, 1000));
+        primaryStage.setScene(new Scene(root, 800, 1000));
         primaryStage.show();
     }
 

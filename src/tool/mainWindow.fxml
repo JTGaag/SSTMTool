@@ -12,6 +12,6 @@
         <Label fx:id="helloWorld" GridPane.rowIndex="1" />
 
         <Button onAction="#openPapyrusModelSelector" text="Open Papyrus model" GridPane.rowIndex="2" />
-        <TextArea fx:id="textArea" prefHeight="800.0" prefWidth="1200.0" GridPane.rowIndex="3" />
+        <TextArea fx:id="textArea" prefHeight="800.0" prefWidth="600.0" GridPane.rowIndex="3" />
     </children>
 </GridPane>
