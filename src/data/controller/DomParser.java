@@ -110,7 +110,7 @@ public class DomParser {
         }
 
         System.out.println("----------------------------");
-        System.out.println("Stereotypes");
+        System.out.println("StereotypesController");
         extractStereotypeData(doc);
 
 
@@ -123,7 +123,7 @@ public class DomParser {
     }
 
     private void extractStereotypeData(Document doc) {
-        stereotypeInstances = Stereotypes.getAllsupportedStereotypes(doc);
+        stereotypeInstances = StereotypesController.getAllsupportedStereotypes(doc);
 
         //DEBUG
         for (Stereotype stereotype: stereotypeInstances) {

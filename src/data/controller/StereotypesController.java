@@ -18,7 +18,7 @@ import java.util.ArrayList;
 /**
  * Created by Joost on 15-Feb-17.
  */
-public class Stereotypes {
+public class StereotypesController {
 
 
     ///////////////////////////////////////////////////
