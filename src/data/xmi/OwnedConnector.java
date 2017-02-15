@@ -6,4 +6,7 @@ package data.xmi;
  * Basic connector element connecting to OwnedAttributes
  */
 public class OwnedConnector extends XMIObject {
+    public OwnedConnector(String id) {
+        super(id);
+    }
 }

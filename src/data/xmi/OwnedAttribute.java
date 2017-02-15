@@ -6,4 +6,7 @@ package data.xmi;
  * Basic property of object. Kind of property is typed by xmi:type
  */
 public class OwnedAttribute extends XMIObject {
+    public OwnedAttribute(String id) {
+        super(id);
+    }
 }

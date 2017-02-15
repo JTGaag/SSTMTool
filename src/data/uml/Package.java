@@ -10,7 +10,8 @@ public class Package extends PackagedElement{
 
     String name;
 
-    public Package(String name) {
+    public Package(String id, String name) {
+        super(id);
         this.name = name;
     }
 

@@ -7,8 +7,8 @@ import data.uml.Class;
  */
 public class Block extends Class {
 
-    public Block(String name) {
-        super(name);
+    public Block(String id, String name) {
+        super(id, name);
     }
 
     @Override

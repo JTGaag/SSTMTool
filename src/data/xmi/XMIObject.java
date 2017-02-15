@@ -8,6 +8,10 @@ public class XMIObject {
 
     String id;
 
+    public XMIObject(String id) {
+        this.id = id;
+    }
+
     public String getId() {
         return id;
     }

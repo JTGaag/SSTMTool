@@ -12,6 +12,10 @@ public class PackagedElement extends XMIObject{
 
     protected String type, name;
 
+    public PackagedElement(String id) {
+        super(id);
+    }
+
     public String getType() {
         return type;
     }

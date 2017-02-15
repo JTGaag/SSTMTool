@@ -1,5 +1,6 @@
 package data.controller;
 
+import data.stereotypes.Stereotype;
 import data.uml.Class;
 import data.uml.Package;
 import data.xmi.PackagedElement;
@@ -28,6 +29,10 @@ public class DomParser {
     DocumentBuilderFactory dbFactory;
     DocumentBuilder dBuilder;
     Document doc;
+
+    ArrayList<Package> packages = new ArrayList<>();
+    ArrayList<Class> classes = new ArrayList<>();
+    ArrayList<Stereotype> stereotypeInstances = new ArrayList<>();
 
     /**
      * Constructor setting everything up
@@ -73,41 +78,64 @@ public class DomParser {
 
         //Get first element (main model and get package elements
         Node model = modelList.item(0);
-        NodeList nList = ((Element)model).getElementsByTagName(PackagedElement.TAG_NAME);
-        System.out.println("Number of elements: " + nList.getLength());
+
+        NodeList packagedElementList = ((Element)model).getElementsByTagName(PackagedElement.TAG_NAME);
+        System.out.println("Number of elements: " + packagedElementList.getLength());
 
         System.out.println("----------------------------");
 
-        ArrayList<Package> packages = new ArrayList<>();
-        ArrayList<Class> classes = new ArrayList<>();
+        for (int temp = 0; temp < packagedElementList.getLength(); temp++) {
 
-        for (int temp = 0; temp < nList.getLength(); temp++) {
+            Node nNode = packagedElementList.item(temp);
 
-            Node nNode = nList.item(temp);
-
-//            System.out.println("\nCurrent Element: " + nNode.getNodeName());
 
             if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 
                 Element eElement = (Element) nNode;
                 if (eElement.getAttribute(PackagedElement.ATTRIBUTE_TYPE).equals(Package.TYPE_NAME)) {
-                    packages.add(new Package(eElement.getAttribute(Package.ATTRIBUTE_NAME)));
-                }else if (eElement.getAttribute(PackagedElement.ATTRIBUTE_TYPE).equals(Class.TYPE_NAME)) {
-                    classes.add(new Class(eElement.getAttribute(Class.ATTRIBUTE_NAME)));
+                    packages.add(new Package(eElement.getAttribute(Package.ATTRIBUTE_ID), eElement.getAttribute(Package.ATTRIBUTE_NAME)));
+                }else if (eElement.getAttribute(PackagedElement.ATTRIBUTE_TYPE).equals(Class.TYPE_NAME)) { //Is a class
+                    classes.add(new Class(eElement.getAttribute(Package.ATTRIBUTE_ID), eElement.getAttribute(Class.ATTRIBUTE_NAME)));
+                    System.out.println(classes.get(classes.size()-1).toString());
+                    NodeList ownedAttributesList = eElement.getElementsByTagName("ownedAttribute");
+                    for (int i=0; i<ownedAttributesList.getLength(); i++) {
+                        Element attribute = (Element)ownedAttributesList.item(i);
+                        System.out.println("    Attribute: name{ " + attribute.getAttribute("name") + " }, type{ " + attribute.getAttribute("xmi:type") + " }");
+                    }
                 }
 
-//
-//                System.out.println("Element Id : " + eElement.getAttribute(PackagedElement.ATTRIBUTE_ID));
-//                System.out.println("Element Type : " + eElement.getAttribute(PackagedElement.ATTRIBUTE_TYPE));
-//                System.out.println("Element Name : " + eElement.getAttribute(PackagedElement.ATTRIBUTE_NAME));
             }
 
 
         }
 
-        for (Class classElement: classes) {
-            System.out.println(classElement.toString());
-        }
+        System.out.println("----------------------------");
+        System.out.println("Stereotypes");
+        extractStereotypeData(doc);
 
+
+    }
+
+    private void resetData() {
+        packages.clear();
+        classes.clear();
+        stereotypeInstances.clear();
+    }
+
+    private void extractStereotypeData(Document doc) {
+        //SysML
+        stereotypeInstances.addAll(Stereotypes.getBlockStereotypeInstances(doc));
+        stereotypeInstances.addAll(Stereotypes.getFlowPortStereotypeInstances(doc));
+        stereotypeInstances.addAll(Stereotypes.getValueTypeStereotypeInstances(doc));
+        //OOSEM
+        stereotypeInstances.addAll(Stereotypes.getNodePhysicalStereotypeInstances(doc));
+        stereotypeInstances.addAll(Stereotypes.getSystemOfInterestStereotypeInstances(doc));
+        //SSTM
+        stereotypeInstances.addAll(Stereotypes.getDeviceStereotypeInstances(doc));
+
+        //DEBUG
+        for (Stereotype stereotype: stereotypeInstances) {
+            System.out.println(stereotype.toString());
+        }
     }
 }
