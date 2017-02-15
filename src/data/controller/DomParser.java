@@ -123,15 +123,7 @@ public class DomParser {
     }
 
     private void extractStereotypeData(Document doc) {
-        //SysML
-        stereotypeInstances.addAll(Stereotypes.getBlockStereotypeInstances(doc));
-        stereotypeInstances.addAll(Stereotypes.getFlowPortStereotypeInstances(doc));
-        stereotypeInstances.addAll(Stereotypes.getValueTypeStereotypeInstances(doc));
-        //OOSEM
-        stereotypeInstances.addAll(Stereotypes.getNodePhysicalStereotypeInstances(doc));
-        stereotypeInstances.addAll(Stereotypes.getSystemOfInterestStereotypeInstances(doc));
-        //SSTM
-        stereotypeInstances.addAll(Stereotypes.getDeviceStereotypeInstances(doc));
+        stereotypeInstances = Stereotypes.getAllsupportedStereotypes(doc);
 
         //DEBUG
         for (Stereotype stereotype: stereotypeInstances) {

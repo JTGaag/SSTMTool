@@ -1,5 +1,6 @@
 package data.controller;
 
+import data.stereotypes.Stereotype;
 import data.stereotypes.oosem.NodePhysicalStereotype;
 import data.stereotypes.oosem.SystemOfInterestStereotype;
 import data.stereotypes.sstm.DeviceStereotype;
@@ -18,6 +19,26 @@ import java.util.ArrayList;
  * Created by Joost on 15-Feb-17.
  */
 public class Stereotypes {
+
+
+    ///////////////////////////////////////////////////
+    //General methods
+    ///////////////////////////////////////////////////
+    public static ArrayList<Stereotype> getAllsupportedStereotypes(Document doc) {
+        ArrayList<Stereotype> allStereotypes = new ArrayList<>();
+        //SysML
+        allStereotypes.addAll(getBlockStereotypeInstances(doc));
+        allStereotypes.addAll(getFlowPortStereotypeInstances(doc));
+        allStereotypes.addAll(getValueTypeStereotypeInstances(doc));
+        //OOSEM
+        allStereotypes.addAll(getNodePhysicalStereotypeInstances(doc));
+        allStereotypes.addAll(getSystemOfInterestStereotypeInstances(doc));
+        //SSTM
+        allStereotypes.addAll(getDeviceStereotypeInstances(doc));
+
+        return allStereotypes;
+    }
+
 
     ///////////////////////////////////////////////////
     //SysML
