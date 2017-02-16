@@ -1,8 +1,10 @@
 package data.xmi.uml;
 
+import com.sun.istack.internal.Nullable;
 import data.xmi.OwnedAttribute;
 import data.xmi.PackagedElement;
 import data.xmi.stereotypes.Stereotype;
+import data.xmi.stereotypes.sstm.SLIMComponentStereotype;
 import data.xmi.stereotypes.sstm.SignalStereotype;
 import data.xmi.stereotypes.sysml.BlockStereotype;
 import data.xmi.stereotypes.sysml.FlowPortStereotype;
@@ -55,6 +57,10 @@ public class Class extends PackagedElement {
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
     public ArrayList<Property> getProperties() {
         return properties;
     }
@@ -102,6 +108,29 @@ public class Class extends PackagedElement {
         return false;
     }
 
+    /**
+     * Function to determine if class is a SLIM component
+     * @return if class is (and can be transformed to) SLIM component
+     */
+    public boolean isSlimComponent() {
+        for (Stereotype stereotype: stereotypes) {
+            if (stereotype instanceof SLIMComponentStereotype) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Get the SLIM Component Stereotype
+     * @return
+     */
+    @Nullable
+    public SLIMComponentStereotype getSLIMComponentStereotype() {
+        for (Stereotype stereotype: stereotypes) {
+            if (stereotype instanceof SLIMComponentStereotype) return (SLIMComponentStereotype)stereotype;
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -113,7 +142,8 @@ public class Class extends PackagedElement {
         return "Class: " + name +
                 "\n     Nr of Properties: " + properties.size() +
                 "\n     Nr of Ports: " + ports.size() +
-                "\n     Signal: " + isSignal() +
+                "\n     Signal?: " + isSignal() +
+                "\n     SLIM Component?: " + isSlimComponent() +
                 "\n     Ports: \n" + stringBuilder.toString();
     }
 }

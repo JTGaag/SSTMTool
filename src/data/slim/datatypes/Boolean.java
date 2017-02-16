@@ -1,6 +1,4 @@
-package data.sstm.slim.datatypes;
-
-import data.xmi.uml.*;
+package data.slim.datatypes;
 
 /**
  * Created by Joost on 16-Feb-17.
@@ -12,5 +10,10 @@ public class Boolean extends DataType {
     @Override
     public String toString() {
         return "Boolean";
+    }
+
+    @Override
+    public String toSlimString() {
+        return "bool";
     }
 }

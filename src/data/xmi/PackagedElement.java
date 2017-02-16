@@ -14,7 +14,7 @@ public class PackagedElement extends XMIObject{
     public static final String ATTRIBUTE_TYPE = "xmi:type";
     public static final String ATTRIBUTE_NAME = "name";
 
-    protected String type, name;
+    protected String type;
 
     public PackagedElement(String id) {
         super(id);
@@ -22,10 +22,6 @@ public class PackagedElement extends XMIObject{
 
     public String getType() {
         return type;
-    }
-
-    public String getName() {
-        return name;
     }
 
 }

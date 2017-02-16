@@ -1,14 +1,14 @@
 package data.xmi.uml;
 
-import data.sstm.slim.datatypes.*;
-import data.sstm.slim.datatypes.Boolean;
-import data.sstm.slim.datatypes.DataType;
-import data.sstm.slim.datatypes.Integer;
+import data.enums.PortDirection;
+import data.slim.datatypes.*;
+import data.slim.datatypes.Boolean;
+import data.slim.datatypes.DataType;
+import data.slim.datatypes.Integer;
 import data.xmi.OwnedAttribute;
 import data.xmi.stereotypes.Stereotype;
 import data.xmi.stereotypes.sysml.FlowPortStereotype;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
@@ -29,11 +29,12 @@ public class Port extends OwnedAttribute{
 
     String name, typeId, aggregation;
     PortType portType = PortType.DATA; //Default is data port
+    PortDirection direction = PortDirection.UNKNOWN;
 
 
     //Possible stereotypes
     private ArrayList<Stereotype> stereotypes = new ArrayList<>();
-    private data.sstm.slim.datatypes.DataType dataType = new DataType();
+    private data.slim.datatypes.DataType dataType = new DataType();
 
     public Port(String id, String name, String typeId, String aggregation) {
         super(id);
@@ -72,9 +73,22 @@ public class Port extends OwnedAttribute{
         return portType;
     }
 
+    public PortDirection getDirection() {
+        return direction;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public boolean addPossibleStereotype(FlowPortStereotype stereotype) {
         if (stereotype.getBasePortId().equals(this.getId())) {
             this.stereotypes.add(stereotype);
+            //Add direction if stereotype is flowPort (has direction parameter in stereotype)
+            if (stereotype instanceof FlowPortStereotype) {
+                this.direction = ((FlowPortStereotype) stereotype).getDirection();
+            }
+
             return true;
         }
         return false;

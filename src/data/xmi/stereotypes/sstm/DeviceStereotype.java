@@ -6,7 +6,7 @@ import org.w3c.dom.Element;
 /**
  * Created by Joost on 15-Feb-17.
  */
-public class DeviceStereotype extends BlockStereotype {
+public class DeviceStereotype extends SLIMComponentStereotype {
     public static final String TAG_NAME = "SSTM.SSTM:Device";
 
     public DeviceStereotype(String id, String baseClassId) {

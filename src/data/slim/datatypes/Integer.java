@@ -1,4 +1,4 @@
-package data.sstm.slim.datatypes;
+package data.slim.datatypes;
 
 /**
  * Created by Joost on 16-Feb-17.
@@ -10,5 +10,10 @@ public class Integer extends DataType {
     @Override
     public String toString() {
         return "Integer";
+    }
+
+    @Override
+    public String toSlimString() {
+        return "int";
     }
 }

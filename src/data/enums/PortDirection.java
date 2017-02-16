@@ -5,5 +5,16 @@ package data.enums;
  * Enum for port direction
  */
 public enum PortDirection {
-    IN, OUT, INOUT, UNKNOWN
+    IN {
+        @Override
+        public String toString() {
+            return "in";
+        }
+    },
+    OUT {
+        @Override
+        public String toString() {
+            return "out";
+        }
+    }, INOUT, UNKNOWN
 }

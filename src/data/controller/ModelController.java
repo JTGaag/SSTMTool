@@ -1,5 +1,6 @@
 package data.controller;
 
+import data.slim.components.Component;
 import data.xmi.stereotypes.Stereotype;
 import data.xmi.stereotypes.sysml.BlockStereotype;
 import data.xmi.stereotypes.sysml.FlowPortStereotype;
@@ -34,6 +35,8 @@ public class ModelController {
     ArrayList<Class> signals = new ArrayList<>();
     ArrayList<DataType> dataTypes = new ArrayList<>();
 
+    ArrayList<Component> components = new ArrayList<>();
+
     public ModelController() {
     }
 
@@ -55,6 +58,9 @@ public class ModelController {
         return packagedElementList;
     }
 
+    public ArrayList<Component> getComponents() {
+        return components;
+    }
 
     /**
      * Categorize all the packagedELements in the right category
@@ -149,6 +155,17 @@ public class ModelController {
         }
     }
 
+    public void transformClassesToComponents() {
+        for (Class cls: classes) {
+            if (cls.isSlimComponent()) {
+                Component component = SLIMComponentCreator.createComponent(cls);
+                if (component != null) {
+                    components.add(component);
+                }
+            }
+        }
+    }
+
     public void listPackages() {
         System.out.println("-------------------------------------------");
         System.out.println("-----------------Packages------------------");
@@ -182,6 +199,15 @@ public class ModelController {
         System.out.println("-------------------------------------------");
         for (Class cls: signals) {
             System.out.println(cls.toString());
+        }
+    }
+
+    public void listComponents() {
+        System.out.println("-------------------------------------------");
+        System.out.println("-----------------Components----------------");
+        System.out.println("-------------------------------------------");
+        for (Component component: components) {
+            System.out.println(component.toSlimString() + "\n\n");
         }
     }
 

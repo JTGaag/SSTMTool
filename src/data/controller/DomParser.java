@@ -97,12 +97,15 @@ public class DomParser {
         mainModelController.extractSignals();
         //Type ports with signal
         mainModelController.typePorts();
+        //Transform xmi classes to SLIM components
+        mainModelController.transformClassesToComponents();
 
 
         mainModelController.listPackages();
         mainModelController.listClasses();
         mainModelController.listDataTypes();
         mainModelController.listSignals();
+        mainModelController.listComponents();
 
     }
 

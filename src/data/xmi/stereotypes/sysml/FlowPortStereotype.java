@@ -14,16 +14,16 @@ public class FlowPortStereotype extends Stereotype {
     public static final String ATTRIBUTE_DIRECTION = "direction";
 
     String basePortId;
-    PortDirection portDirection;
+    PortDirection direction;
 
 
-    public FlowPortStereotype(String id, String basePortId, String portDirection) {
+    public FlowPortStereotype(String id, String basePortId, String direction) {
         super(id);
         this.basePortId = basePortId;
 
-        if(portDirection.equals("in")) this.portDirection = PortDirection.IN;
-        else if (portDirection.equals("out")) this.portDirection = PortDirection.OUT;
-        else this.portDirection = PortDirection.UNKNOWN;
+        if(direction.equals("in")) this.direction = PortDirection.IN;
+        else if (direction.equals("out")) this.direction = PortDirection.OUT;
+        else this.direction = PortDirection.UNKNOWN;
 
     }
 
@@ -33,13 +33,13 @@ public class FlowPortStereotype extends Stereotype {
 
         switch (flowPortStereotypeElement.getAttribute(ATTRIBUTE_DIRECTION)) {
             case "in":
-                this.portDirection = PortDirection.IN;
+                this.direction = PortDirection.IN;
                 break;
             case "out":
-                this.portDirection = PortDirection.OUT;
+                this.direction = PortDirection.OUT;
                 break;
             default:
-                this.portDirection = PortDirection.UNKNOWN;
+                this.direction = PortDirection.UNKNOWN;
                 break;
         }
     }
@@ -48,8 +48,8 @@ public class FlowPortStereotype extends Stereotype {
         return basePortId;
     }
 
-    public PortDirection getPortDirection() {
-        return portDirection;
+    public PortDirection getDirection() {
+        return direction;
     }
 
     @Override
