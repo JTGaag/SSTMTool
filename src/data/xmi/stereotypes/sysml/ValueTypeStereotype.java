@@ -1,6 +1,7 @@
-package data.stereotypes.sysml;
+package data.xmi.stereotypes.sysml;
 
-import data.stereotypes.Stereotype;
+import data.xmi.stereotypes.Stereotype;
+import org.w3c.dom.Element;
 
 /**
  * Created by Joost on 15-Feb-17.
@@ -16,6 +17,12 @@ public class ValueTypeStereotype extends Stereotype {
         super(id);
         this.baseDataTypeId = baseDataTypeId;
         this.unitId = unitId;
+    }
+
+    public ValueTypeStereotype(Element valueTypeStereotypeElement) {
+        super(valueTypeStereotypeElement.getAttribute(ATTRIBUTE_ID));
+        this.baseDataTypeId = valueTypeStereotypeElement.getAttribute(ATTRIBUTE_BASE_DATA_TYPE);
+        this.unitId = valueTypeStereotypeElement.getAttribute(ATTRIBUTE_UNIT);
     }
 
     public String getBaseDataTypeId() {

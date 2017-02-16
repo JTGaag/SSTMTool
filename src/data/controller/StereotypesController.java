@@ -1,13 +1,13 @@
 package data.controller;
 
-import data.stereotypes.Stereotype;
-import data.stereotypes.oosem.NodePhysicalStereotype;
-import data.stereotypes.oosem.SystemOfInterestStereotype;
-import data.stereotypes.sstm.DeviceStereotype;
-import data.stereotypes.sysml.BlockStereotype;
-import data.stereotypes.sysml.FlowPortStereotype;
-import data.stereotypes.sysml.ValueTypeStereotype;
-import data.xmi.PackagedElement;
+import data.xmi.stereotypes.Stereotype;
+import data.xmi.stereotypes.oosem.NodePhysicalStereotype;
+import data.xmi.stereotypes.oosem.SystemOfInterestStereotype;
+import data.xmi.stereotypes.sstm.DeviceStereotype;
+import data.xmi.stereotypes.sstm.SignalStereotype;
+import data.xmi.stereotypes.sysml.BlockStereotype;
+import data.xmi.stereotypes.sysml.FlowPortStereotype;
+import data.xmi.stereotypes.sysml.ValueTypeStereotype;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -35,6 +35,7 @@ public class StereotypesController {
         allStereotypes.addAll(getSystemOfInterestStereotypeInstances(doc));
         //SSTM
         allStereotypes.addAll(getDeviceStereotypeInstances(doc));
+        allStereotypes.addAll(getSignalStereotypeInstances(doc));
 
         return allStereotypes;
     }
@@ -51,7 +52,7 @@ public class StereotypesController {
             Node blockNode = blockStereotypesList.item(i);
             if (blockNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element blockElement = (Element)blockNode;
-                blockStereotypeInstances.add(new BlockStereotype(blockElement.getAttribute(BlockStereotype.ATTRIBUTE_ID), blockElement.getAttribute(BlockStereotype.ATTRIBUTE_BASE_CLASS)));
+                blockStereotypeInstances.add(new BlockStereotype(blockElement));
             }
         }
         return blockStereotypeInstances;
@@ -64,7 +65,7 @@ public class StereotypesController {
             Node flowPortNode = flowPortStereotypesList.item(i);
             if (flowPortNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element flowPortElement = (Element)flowPortNode;
-                flowPortStereotypeInstances.add(new FlowPortStereotype(flowPortElement.getAttribute(FlowPortStereotype.ATTRIBUTE_ID), flowPortElement.getAttribute(FlowPortStereotype.ATTRIBUTE_BASE_PORT), flowPortElement.getAttribute(FlowPortStereotype.ATTRIBUTE_DIRECTION)));
+                flowPortStereotypeInstances.add(new FlowPortStereotype(flowPortElement));
             }
         }
         return flowPortStereotypeInstances;
@@ -77,7 +78,7 @@ public class StereotypesController {
             Node valueTypeNode = valueTypeStereotypesList.item(i);
             if (valueTypeNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element valueTypeElement = (Element)valueTypeNode;
-                valueTypeStereotypeInstances.add(new ValueTypeStereotype(valueTypeElement.getAttribute(ValueTypeStereotype.ATTRIBUTE_ID), valueTypeElement.getAttribute(ValueTypeStereotype.ATTRIBUTE_BASE_DATA_TYPE), valueTypeElement.getAttribute(ValueTypeStereotype.ATTRIBUTE_UNIT)));
+                valueTypeStereotypeInstances.add(new ValueTypeStereotype(valueTypeElement));
             }
         }
         return valueTypeStereotypeInstances;
@@ -95,7 +96,7 @@ public class StereotypesController {
             Node nodePhysicalNode = nodePhysicalStereotypesList.item(i);
             if (nodePhysicalNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element nodePhysicalElement = (Element)nodePhysicalNode;
-                nodePhysicalStereotypeInstances.add(new NodePhysicalStereotype(nodePhysicalElement.getAttribute(NodePhysicalStereotype.ATTRIBUTE_ID), nodePhysicalElement.getAttribute(NodePhysicalStereotype.ATTRIBUTE_BASE_CLASS)));
+                nodePhysicalStereotypeInstances.add(new NodePhysicalStereotype(nodePhysicalElement));
             }
         }
         return nodePhysicalStereotypeInstances;
@@ -108,7 +109,7 @@ public class StereotypesController {
             Node systemOfInterestNode = systemOfInterestStereotypesList.item(i);
             if (systemOfInterestNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element systemOfInterestElement = (Element)systemOfInterestNode;
-                systemOfInterestStereotypeInstances.add(new SystemOfInterestStereotype(systemOfInterestElement.getAttribute(SystemOfInterestStereotype.ATTRIBUTE_ID), systemOfInterestElement.getAttribute(SystemOfInterestStereotype.ATTRIBUTE_BASE_CLASS)));
+                systemOfInterestStereotypeInstances.add(new SystemOfInterestStereotype(systemOfInterestElement));
             }
         }
         return systemOfInterestStereotypeInstances;
@@ -126,10 +127,23 @@ public class StereotypesController {
             Node deviceNode = deviceStereotypesList.item(i);
             if (deviceNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element deviceElement = (Element)deviceNode;
-                deviceStereotypeInstances.add(new DeviceStereotype(deviceElement.getAttribute(DeviceStereotype.ATTRIBUTE_ID), deviceElement.getAttribute(DeviceStereotype.ATTRIBUTE_BASE_CLASS)));
+                deviceStereotypeInstances.add(new DeviceStereotype(deviceElement));
             }
         }
         return deviceStereotypeInstances;
+    }
+
+    public static ArrayList<SignalStereotype> getSignalStereotypeInstances(Document doc) {
+        ArrayList<SignalStereotype> signalStereotypeInstances= new ArrayList<>();
+        NodeList signalStereotypesList = doc.getElementsByTagName(SignalStereotype.TAG_NAME);
+        for (int i=0; i<signalStereotypesList.getLength(); i++) {
+            Node signalNode = signalStereotypesList.item(i);
+            if (signalNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element signalElement = (Element)signalNode;
+                signalStereotypeInstances.add(new SignalStereotype(signalElement));
+            }
+        }
+        return signalStereotypeInstances;
     }
 
 }

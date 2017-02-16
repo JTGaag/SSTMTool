@@ -1,6 +1,7 @@
-package data.uml;
+package data.xmi.uml;
 
 import data.xmi.PackagedElement;
+import org.w3c.dom.Element;
 
 /**
  * Created by Joost on 14-Feb-17.
@@ -13,6 +14,11 @@ public class Package extends PackagedElement{
     public Package(String id, String name) {
         super(id);
         this.name = name;
+    }
+
+    public Package(Element packageElement) {
+        super(packageElement.getAttribute(ATTRIBUTE_ID));
+        this.name = packageElement.getAttribute(ATTRIBUTE_NAME);
     }
 
     @Override

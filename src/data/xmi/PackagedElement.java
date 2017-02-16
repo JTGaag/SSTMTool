@@ -1,5 +1,9 @@
 package data.xmi;
 
+import data.xmi.stereotypes.Stereotype;
+
+import java.util.ArrayList;
+
 /**
  * Created by Joost on 14-Feb-17.
  *
@@ -23,4 +27,5 @@ public class PackagedElement extends XMIObject{
     public String getName() {
         return name;
     }
+
 }

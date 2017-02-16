@@ -1,4 +1,4 @@
-package data.stereotypes;
+package data.xmi.stereotypes;
 
 import data.xmi.XMIObject;
 

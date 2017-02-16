@@ -1,6 +1,7 @@
-package data.stereotypes.sstm;
+package data.xmi.stereotypes.sstm;
 
-import data.stereotypes.sysml.BlockStereotype;
+import data.xmi.stereotypes.sysml.BlockStereotype;
+import org.w3c.dom.Element;
 
 /**
  * Created by Joost on 15-Feb-17.
@@ -10,6 +11,10 @@ public class DeviceStereotype extends BlockStereotype {
 
     public DeviceStereotype(String id, String baseClassId) {
         super(id, baseClassId);
+    }
+
+    public DeviceStereotype(Element deviceStereotypeElement) {
+        super(deviceStereotypeElement);
     }
 
     @Override

@@ -1,6 +1,6 @@
-package data.sysml;
+package data.sstm.sysml;
 
-import data.uml.Class;
+import data.xmi.uml.Class;
 
 /**
  * Created by Joost on 14-Feb-17.

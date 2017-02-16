@@ -1,9 +1,8 @@
 package data.controller;
 
-import data.stereotypes.Stereotype;
-import data.uml.Class;
-import data.uml.Package;
-import data.xmi.PackagedElement;
+import data.xmi.stereotypes.Stereotype;
+import data.xmi.uml.Class;
+import data.xmi.uml.Package;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -33,6 +32,8 @@ public class DomParser {
     ArrayList<Package> packages = new ArrayList<>();
     ArrayList<Class> classes = new ArrayList<>();
     ArrayList<Stereotype> stereotypeInstances = new ArrayList<>();
+
+    ModelController mainModelController = new ModelController();
 
     /**
      * Constructor setting everything up
@@ -79,40 +80,29 @@ public class DomParser {
         //Get first element (main model and get package elements
         Node model = modelList.item(0);
 
-        NodeList packagedElementList = ((Element)model).getElementsByTagName(PackagedElement.TAG_NAME);
-        System.out.println("Number of elements: " + packagedElementList.getLength());
+        mainModelController.setModel((Element)model);
 
-        System.out.println("----------------------------");
-
-        for (int temp = 0; temp < packagedElementList.getLength(); temp++) {
-
-            Node nNode = packagedElementList.item(temp);
+        mainModelController.categorizePackagedElements();
 
 
-            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 
-                Element eElement = (Element) nNode;
-                if (eElement.getAttribute(PackagedElement.ATTRIBUTE_TYPE).equals(Package.TYPE_NAME)) {
-                    packages.add(new Package(eElement.getAttribute(Package.ATTRIBUTE_ID), eElement.getAttribute(Package.ATTRIBUTE_NAME)));
-                }else if (eElement.getAttribute(PackagedElement.ATTRIBUTE_TYPE).equals(Class.TYPE_NAME)) { //Is a class
-                    classes.add(new Class(eElement.getAttribute(Package.ATTRIBUTE_ID), eElement.getAttribute(Class.ATTRIBUTE_NAME)));
-                    System.out.println(classes.get(classes.size()-1).toString());
-                    NodeList ownedAttributesList = eElement.getElementsByTagName("ownedAttribute");
-                    for (int i=0; i<ownedAttributesList.getLength(); i++) {
-                        Element attribute = (Element)ownedAttributesList.item(i);
-                        System.out.println("    Attribute: name{ " + attribute.getAttribute("name") + " }, type{ " + attribute.getAttribute("xmi:type") + " }");
-                    }
-                }
-
-            }
-
-
-        }
 
         System.out.println("----------------------------");
         System.out.println("StereotypesController");
         extractStereotypeData(doc);
 
+        //Add stereotypes
+        mainModelController.addStereotypesToElements(stereotypeInstances);
+        //extract signals
+        mainModelController.extractSignals();
+        //Type ports with signal
+        mainModelController.typePorts();
+
+
+        mainModelController.listPackages();
+        mainModelController.listClasses();
+        mainModelController.listDataTypes();
+        mainModelController.listSignals();
 
     }
 
@@ -124,10 +114,5 @@ public class DomParser {
 
     private void extractStereotypeData(Document doc) {
         stereotypeInstances = StereotypesController.getAllsupportedStereotypes(doc);
-
-        //DEBUG
-        for (Stereotype stereotype: stereotypeInstances) {
-            System.out.println(stereotype.toString());
-        }
     }
 }

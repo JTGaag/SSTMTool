@@ -1,6 +1,7 @@
-package data.stereotypes.oosem;
+package data.xmi.stereotypes.oosem;
 
-import data.stereotypes.sysml.BlockStereotype;
+import data.xmi.stereotypes.sysml.BlockStereotype;
+import org.w3c.dom.Element;
 
 /**
  * Created by Joost on 15-Feb-17.
@@ -10,6 +11,10 @@ public class SystemOfInterestStereotype extends BlockStereotype {
 
     public SystemOfInterestStereotype(String id, String baseClassId) {
         super(id, baseClassId);
+    }
+
+    public SystemOfInterestStereotype(Element systemOfInterestStereotypeElement) {
+        super(systemOfInterestStereotypeElement);
     }
 
     @Override
