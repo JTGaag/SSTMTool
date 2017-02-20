@@ -1,17 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.GridPane?>
-
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
-<GridPane fx:controller="tool.MainController"
-          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+
+<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tool.MainController">
     <children>
 
         <Button onAction="#sayHelloWorld" text="Hello World" />
         <Label fx:id="helloWorld" GridPane.rowIndex="1" />
-
-        <Button onAction="#openPapyrusModelSelector" text="Open Papyrus model" GridPane.rowIndex="2" />
         <TextArea fx:id="textArea" prefHeight="800.0" prefWidth="600.0" GridPane.rowIndex="3" />
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="2">
+         <children>
+      
+            <Button onAction="#openPapyrusModelSelector" prefHeight="25.0" prefWidth="140.0" text="Open Papyrus model" />
+            <VBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="179.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#selectOutputDirectory" prefHeight="24.0" prefWidth="152.0" text="Select output directory" />
+                  <Button mnemonicParsing="false" onAction="#createOutputFile" text="Create Output file" />
+                  <Button mnemonicParsing="false" onAction="#writeSlimToFile" text="Write SLIM to file" />
+               </children>
+            </VBox>
+            <Label fx:id="textFileLocation" text="File location" />
+         </children>
+      </HBox>
     </children>
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+   </rowConstraints>
 </GridPane>

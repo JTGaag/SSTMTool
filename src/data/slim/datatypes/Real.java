@@ -5,7 +5,7 @@ package data.slim.datatypes;
  * SLIM Real datatype
  */
 public class Real extends DataType {
-    public static final String HREF_NAME = "pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Real";
+    public static final String HREF_NAME = "pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.structure#Real";
 
     @Override
     public String toString() {

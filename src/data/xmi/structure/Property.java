@@ -1,7 +1,9 @@
-package data.xmi.uml;
+package data.xmi.structure;
 
 import data.xmi.OwnedAttribute;
 import org.w3c.dom.Element;
+
+import java.util.ArrayList;
 
 /**
  * Created by Joost on 14-Feb-17.
@@ -14,6 +16,7 @@ public class Property extends OwnedAttribute{
     public static final String ATTRIBUTE_ASSOCIATION = "association";
 
     String name, typeId, aggregation, associationId;
+    Class type;
 
     public Property(String id, String name, String typeId, String aggregation, String associationId) {
         super(id);
@@ -31,6 +34,34 @@ public class Property extends OwnedAttribute{
         this.associationId = propertyElement.getAttribute(ATTRIBUTE_ASSOCIATION);
     }
 
+    public void setType(ArrayList<Class> classes) {
+        for (Class cls: classes) {
+            if (cls.getId().equals(this.typeId)) {
+                this.type = cls;
+                return;
+            }
+        }
+    }
+
+    public String getTypeId() {
+        return typeId;
+    }
+
+    public Class getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getAggregation() {
+        return aggregation;
+    }
+
+    public String getAssociationId() {
+        return associationId;
+    }
 
     @Override
     public String toString() {

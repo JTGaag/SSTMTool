@@ -5,7 +5,7 @@ package data.slim.internal;
  * SLIM event port java object
  */
 public class EventPort extends Port {
-    public EventPort(data.xmi.uml.Port xmiPort) {
+    public EventPort(data.xmi.structure.Port xmiPort) {
         super(xmiPort);
     }
 
@@ -15,7 +15,7 @@ public class EventPort extends Port {
         sb.append(name);
         sb.append(": ");
         sb.append(direction);
-        sb.append(" even port;");
+        sb.append(" event port;");
         return sb.toString();
     }
 }

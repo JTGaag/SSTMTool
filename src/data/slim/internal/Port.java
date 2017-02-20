@@ -8,12 +8,12 @@ import data.slim.SlimObject;
  * General parent for SLIM ports
  */
 public class Port extends SlimObject{
-    data.xmi.uml.Port xmiPort;
+    data.xmi.structure.Port xmiPort;
 
     String name;
     PortDirection direction;
 
-    public Port(data.xmi.uml.Port xmiPort) {
+    public Port(data.xmi.structure.Port xmiPort) {
         this.xmiPort = xmiPort;
         this.name = xmiPort.getName();
         this.direction = xmiPort.getDirection();

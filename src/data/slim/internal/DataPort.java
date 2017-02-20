@@ -12,7 +12,7 @@ import data.slim.datatypes.DataType;
 public class DataPort extends Port {
     DataType dataType;
 
-    public DataPort(data.xmi.uml.Port xmiPort) {
+    public DataPort(data.xmi.structure.Port xmiPort) {
         super(xmiPort);
         this.dataType = xmiPort.getDataType();
     }

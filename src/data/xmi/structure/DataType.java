@@ -1,12 +1,9 @@
-package data.xmi.uml;
+package data.xmi.structure;
 
-import data.xmi.OwnedAttribute;
 import data.xmi.PackagedElement;
 import data.xmi.stereotypes.Stereotype;
-import data.xmi.stereotypes.sysml.FlowPortStereotype;
 import data.xmi.stereotypes.sysml.ValueTypeStereotype;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package data.xmi.uml;
+package data.xmi.structure;
 
 import data.enums.PortDirection;
 import data.slim.datatypes.*;

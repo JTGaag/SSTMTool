@@ -5,9 +5,9 @@ import data.xmi.stereotypes.Stereotype;
 import data.xmi.stereotypes.sysml.BlockStereotype;
 import data.xmi.stereotypes.sysml.FlowPortStereotype;
 import data.xmi.stereotypes.sysml.ValueTypeStereotype;
-import data.xmi.uml.Class;
-import data.xmi.uml.DataType;
-import data.xmi.uml.Package;
+import data.xmi.structure.Class;
+import data.xmi.structure.DataType;
+import data.xmi.structure.Package;
 import data.xmi.PackagedElement;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -28,6 +28,8 @@ import java.util.Iterator;
  */
 public class ModelController {
     Element model;
+    ArrayList<Stereotype> stereotypes = new ArrayList<>();
+
     NodeList packagedElementList;
 
     ArrayList<Package> packages = new ArrayList<>();
@@ -54,6 +56,20 @@ public class ModelController {
         System.out.println("----------------------------");
     }
 
+    public void setStereotypes(ArrayList<Stereotype> stereotypes) {
+        this.stereotypes = stereotypes;
+    }
+
+    public void transformModel() {
+        categorizePackagedElements();
+        addStereotypesToElements();
+        extractSignals();
+        typePorts();
+//        typeProperties();
+        transformClassesToComponents();
+        createSubcomponents();
+    }
+
     public NodeList getPackagedElementList() {
         return packagedElementList;
     }
@@ -70,7 +86,7 @@ public class ModelController {
      * -Class
      * -DataType
      */
-    public void categorizePackagedElements() {
+    private void categorizePackagedElements() {
         if (packagedElementList == null) return;
 
         //Clear all arraylists
@@ -110,9 +126,8 @@ public class ModelController {
 
     /**
      * Apply all the stereotypes to all elements
-     * @param stereotypes
      */
-    public void addStereotypesToElements(ArrayList<Stereotype> stereotypes) {
+    private void addStereotypesToElements() {
         //Loop over all stereotypes and try to add them to Class or Port
         for (Stereotype stereotype: stereotypes) {
             if (stereotype instanceof ValueTypeStereotype) {
@@ -132,7 +147,7 @@ public class ModelController {
         }
     }
 
-    public void extractSignals() {
+    private void extractSignals() {
         Iterator<Class> iterator = classes.iterator();
         while (iterator.hasNext()) {
             Class cls = iterator.next();
@@ -144,7 +159,7 @@ public class ModelController {
     }
 
     //Type all ports
-    public void typePorts() {
+    private void typePorts() {
         //Loop over all signals
         for(Class signal: signals) {
             //Loop over all classes
@@ -155,7 +170,20 @@ public class ModelController {
         }
     }
 
-    public void transformClassesToComponents() {
+    /**
+     * Type all the properties in SLIM component classes
+     */
+    private void typeProperties() {
+        //Loop over all classes to add types to properties
+        for (Class cls: classes) {
+            //Only for slim components
+            if(cls.isSlimComponent()) {
+                cls.setPropertiesType(classes);
+            }
+        }
+    }
+
+    private void transformClassesToComponents() {
         for (Class cls: classes) {
             if (cls.isSlimComponent()) {
                 Component component = SLIMComponentCreator.createComponent(cls);
@@ -164,6 +192,25 @@ public class ModelController {
                 }
             }
         }
+    }
+
+    private void createSubcomponents() {
+        for (Component component: components) {
+            component.createSubcomponents(components);
+        }
+    }
+
+    public String getSlimText() {
+        System.out.println("Get SLIM in model controller parser");
+        StringBuilder sb = new StringBuilder();
+        for (Component component: components) {
+            sb.append(component.toSlimTypeString());
+            sb.append("\n\n");
+            sb.append(component.toSlimImplementationString());
+            sb.append("\n\n\n");
+        }
+        System.out.println(sb.toString());
+        return sb.toString();
     }
 
     public void listPackages() {
@@ -207,7 +254,7 @@ public class ModelController {
         System.out.println("-----------------Components----------------");
         System.out.println("-------------------------------------------");
         for (Component component: components) {
-            System.out.println(component.toSlimString() + "\n\n");
+            System.out.println(component.toSlimTypeString() + "\n\n" + component.toSlimImplementationString() + "\n\n\n");
         }
     }
 

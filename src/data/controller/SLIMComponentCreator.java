@@ -5,7 +5,7 @@ import data.slim.components.Component;
 import data.slim.components.Device;
 import data.xmi.stereotypes.sstm.DeviceStereotype;
 import data.xmi.stereotypes.sstm.SLIMComponentStereotype;
-import data.xmi.uml.Class;
+import data.xmi.structure.Class;
 
 /**
  * Created by Joost on 16-Feb-17.

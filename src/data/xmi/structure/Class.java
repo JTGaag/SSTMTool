@@ -1,4 +1,4 @@
-package data.xmi.uml;
+package data.xmi.structure;
 
 import com.sun.istack.internal.Nullable;
 import data.xmi.OwnedAttribute;
@@ -91,6 +91,12 @@ public class Class extends PackagedElement {
     public void setPossibleTypePorts(String signalId) {
         for (Port port: ports) {
             port.setPossibleTypePort(signalId);
+        }
+    }
+
+    public void setPropertiesType(ArrayList<Class> classes) {
+        for (Property property: properties) {
+            property.setType(classes);
         }
     }
 

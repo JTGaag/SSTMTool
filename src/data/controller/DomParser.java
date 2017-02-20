@@ -1,8 +1,8 @@
 package data.controller;
 
 import data.xmi.stereotypes.Stereotype;
-import data.xmi.uml.Class;
-import data.xmi.uml.Package;
+import data.xmi.structure.Class;
+import data.xmi.structure.Package;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -81,24 +81,10 @@ public class DomParser {
         Node model = modelList.item(0);
 
         mainModelController.setModel((Element)model);
-
-        mainModelController.categorizePackagedElements();
-
-
-
-
-        System.out.println("----------------------------");
-        System.out.println("StereotypesController");
-        extractStereotypeData(doc);
-
         //Add stereotypes
-        mainModelController.addStereotypesToElements(stereotypeInstances);
-        //extract signals
-        mainModelController.extractSignals();
-        //Type ports with signal
-        mainModelController.typePorts();
-        //Transform xmi classes to SLIM components
-        mainModelController.transformClassesToComponents();
+        mainModelController.setStereotypes(StereotypesController.getAllsupportedStereotypes(doc));
+
+        mainModelController.transformModel();
 
 
         mainModelController.listPackages();
@@ -117,5 +103,14 @@ public class DomParser {
 
     private void extractStereotypeData(Document doc) {
         stereotypeInstances = StereotypesController.getAllsupportedStereotypes(doc);
+    }
+
+    /**
+     * Quick debug fuinction (should be better on high level)
+     * @return
+     */
+    public String getSlimText() {
+        System.out.println("Get SLIM in DOM parser");
+        return mainModelController.getSlimText();
     }
 }

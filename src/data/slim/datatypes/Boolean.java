@@ -5,7 +5,7 @@ package data.slim.datatypes;
  * SLIM Boolean data type
  */
 public class Boolean extends DataType {
-    public static final String HREF_NAME = "pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean";
+    public static final String HREF_NAME = "pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.structure#Boolean";
 
     @Override
     public String toString() {

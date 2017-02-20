@@ -5,7 +5,7 @@ package data.slim.datatypes;
  * SLIM Integer datatype
  */
 public class Integer extends DataType {
-    public static final String HREF_NAME = "pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer";
+    public static final String HREF_NAME = "pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.structure#Integer";
 
     @Override
     public String toString() {

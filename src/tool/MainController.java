@@ -1,9 +1,11 @@
 package tool;
 
 import data.controller.DomParser;
+import data.controller.IOController;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
 import java.io.*;
@@ -12,7 +14,9 @@ import java.util.Random;
 public class MainController {
     public Label helloWorld;
     public TextArea textArea;
+    public Label textFileLocation;
     private DomParser domParser = new DomParser();
+    private IOController ioController = new IOController();
 
     public void sayHelloWorld(ActionEvent actionEvent) {
         int random = (new Random()).nextInt(10000);
@@ -49,5 +53,26 @@ public class MainController {
             domParser.readFile();
 
         }
+    }
+
+    public void selectOutputDirectory(ActionEvent actionEvent) {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Choose output file directory");
+        File outputDirectory = directoryChooser.showDialog(null);
+        if (outputDirectory != null) {
+            textFileLocation.setText(outputDirectory.getAbsolutePath());
+            ioController.setOutputDirectory(outputDirectory);
+        }
+    }
+
+    public void createOutputFile(ActionEvent actionEvent) {
+        boolean success = ioController.createOutputFile();
+        if (success) {
+            textFileLocation.setText(ioController.getOutputFile().getAbsolutePath());
+        }
+    }
+
+    public void writeSlimToFile(ActionEvent actionEvent) {
+        ioController.writeToOutputFile(domParser.getSlimText());
     }
 }

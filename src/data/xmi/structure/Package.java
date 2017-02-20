@@ -1,4 +1,4 @@
-package data.xmi.uml;
+package data.xmi.structure;
 
 import data.xmi.PackagedElement;
 import org.w3c.dom.Element;
