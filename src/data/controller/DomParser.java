@@ -84,6 +84,11 @@ public class DomParser {
         //Add stereotypes
         mainModelController.setStereotypes(StereotypesController.getAllsupportedStereotypes(doc));
 
+        //debug
+        for (Stereotype stereotype: StereotypesController.getAllsupportedStereotypes(doc)) {
+            System.out.println(stereotype.toString());
+        }
+
         mainModelController.transformModel();
 
 

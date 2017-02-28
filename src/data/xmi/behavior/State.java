@@ -13,9 +13,9 @@ public class State extends Subvertex{
     String name;
     boolean initial = false;
 
-    public State(Element packageElement) {
-        super(packageElement.getAttribute(ATTRIBUTE_ID));
-        this.name = packageElement.getAttribute(ATTRIBUTE_NAME);
+    public State(Element stateElement) {
+        super(stateElement.getAttribute(ATTRIBUTE_ID));
+        this.name = stateElement.getAttribute(ATTRIBUTE_NAME);
     }
 
     public void setInitial(boolean initial) {

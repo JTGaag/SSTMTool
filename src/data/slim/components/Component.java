@@ -1,9 +1,9 @@
 package data.slim.components;
 
 import data.slim.SlimObject;
-import data.slim.internal.DataPort;
-import data.slim.internal.EventPort;
-import data.slim.internal.Subcomponent;
+import data.slim.internal.*;
+import data.xmi.behavior.Region;
+import data.xmi.behavior.StateMachine;
 import data.xmi.structure.Class;
 import data.xmi.structure.Port;
 import data.xmi.structure.Property;
@@ -25,6 +25,8 @@ public class Component extends SlimObject{
     ArrayList<data.slim.internal.Port> ports = new ArrayList<>();
 
     ArrayList<Subcomponent> subcomponents = new ArrayList<>();
+    ArrayList<State> states = new ArrayList<>();
+    ArrayList<Mode> modes = new ArrayList<>();
 
     /**
      * Constructor
@@ -34,6 +36,7 @@ public class Component extends SlimObject{
         this.baseXmiClass = baseXmiClass;
         this.name = baseXmiClass.getName();
         initPorts();
+        initStates();
     }
 
     public void createSubcomponents(ArrayList<Component> components) {
@@ -44,6 +47,7 @@ public class Component extends SlimObject{
                 }
             }
         }
+
     }
 
     private void initPorts() {
@@ -62,6 +66,18 @@ public class Component extends SlimObject{
         }
     }
 
+    private void initStates() {
+        states.clear();
+        StateMachine stateMachine = baseXmiClass.getStateMachine();
+        if (stateMachine != null) {
+            Region region = stateMachine.getRegion();
+            if (region != null) {
+                for (data.xmi.behavior.State state: region.getStates()) {
+                    states.add(new State(state));
+                }
+            }
+        }
+    }
 
     public ArrayList<DataPort> getDataPorts() {
         return dataPorts;
@@ -77,6 +93,10 @@ public class Component extends SlimObject{
 
     public String getName() {
         return name;
+    }
+
+    public boolean isAtomic() {
+        return (subcomponents.size() == 0);
     }
 
     /**
@@ -105,11 +125,19 @@ public class Component extends SlimObject{
     @Override
     public String toSlimTypeString() {
         StringBuilder sb = new StringBuilder();
+
+        //Begin tag
         sb.append(slimComponentTypeName + " " + name + "\n");
-        sb.append("\tfeatures\n");
-        for (data.slim.internal.Port port: ports) {
-            sb.append("\t\t" + port.toSlimString() + "\n");
+
+        //Ports
+        if (ports.size() > 0) {
+            sb.append("\tfeatures\n");
+            for (data.slim.internal.Port port : ports) {
+                sb.append("\t\t" + port.toSlimString() + "\n");
+            }
         }
+
+        //End tag
         sb.append("end " + name + ";");
         return sb.toString();
     }
@@ -117,13 +145,36 @@ public class Component extends SlimObject{
     @Override
     public String toSlimImplementationString() {
         StringBuilder sb = new StringBuilder();
+        //Begin tag
         sb.append(slimComponentTypeName + " implementation " + getImplementationName() + "\n");
-        if(subcomponents.size()>0) {
+
+        //Sub components
+        if (subcomponents.size()>0) {
             sb.append("\tsubcomponents\n");
             for (Subcomponent subcomponent : subcomponents) {
                 sb.append("\t\t" + subcomponent.toSlimString() + "\n");
             }
         }
+
+        //States and Modes
+        if (states.size() > 0) {
+            if (isAtomic()) {
+                sb.append("\tstates\n");
+                for (State state: states) {
+                    sb.append("\t\t" + state.toSlimString() + "\n");
+                }
+            } else {
+                sb.append("\tmodes\n");
+                for (State state: states) {
+                    Mode mode = new Mode(state);
+                    sb.append("\t\t" + mode.toSlimString() + "\n");
+                }
+            }
+
+
+        }
+
+        //End tag
         sb.append("end " + getImplementationName() + ";");
         return sb.toString();
     }

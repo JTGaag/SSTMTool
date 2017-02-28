@@ -4,7 +4,9 @@ import data.xmi.stereotypes.Stereotype;
 import data.xmi.stereotypes.oosem.NodePhysicalStereotype;
 import data.xmi.stereotypes.oosem.SystemOfInterestStereotype;
 import data.xmi.stereotypes.sstm.DeviceStereotype;
+import data.xmi.stereotypes.sstm.ProcessorStereotype;
 import data.xmi.stereotypes.sstm.SignalStereotype;
+import data.xmi.stereotypes.sstm.SystemStereotype;
 import data.xmi.stereotypes.sysml.BlockStereotype;
 import data.xmi.stereotypes.sysml.FlowPortStereotype;
 import data.xmi.stereotypes.sysml.ValueTypeStereotype;
@@ -35,6 +37,8 @@ public class StereotypesController {
         allStereotypes.addAll(getSystemOfInterestStereotypeInstances(doc));
         //SSTM
         allStereotypes.addAll(getDeviceStereotypeInstances(doc));
+        allStereotypes.addAll(getSystemStereotypeInstances(doc));
+        allStereotypes.addAll(getProcessorStereotypeInstances(doc));
         allStereotypes.addAll(getSignalStereotypeInstances(doc));
 
         return allStereotypes;
@@ -131,6 +135,32 @@ public class StereotypesController {
             }
         }
         return deviceStereotypeInstances;
+    }
+
+    public static ArrayList<SystemStereotype> getSystemStereotypeInstances(Document doc) {
+        ArrayList<SystemStereotype> systemStereotypeInstances= new ArrayList<>();
+        NodeList systemStereotypesList = doc.getElementsByTagName(SystemStereotype.TAG_NAME);
+        for (int i=0; i<systemStereotypesList.getLength(); i++) {
+            Node systemNode = systemStereotypesList.item(i);
+            if (systemNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element systemElement = (Element)systemNode;
+                systemStereotypeInstances.add(new SystemStereotype(systemElement));
+            }
+        }
+        return systemStereotypeInstances;
+    }
+
+    public static ArrayList<ProcessorStereotype> getProcessorStereotypeInstances(Document doc) {
+        ArrayList<ProcessorStereotype> processorStereotypeInstances= new ArrayList<>();
+        NodeList processorStereotypesList = doc.getElementsByTagName(ProcessorStereotype.TAG_NAME);
+        for (int i=0; i<processorStereotypesList.getLength(); i++) {
+            Node processorNode = processorStereotypesList.item(i);
+            if (processorNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element processorElement = (Element)processorNode;
+                processorStereotypeInstances.add(new ProcessorStereotype(processorElement));
+            }
+        }
+        return processorStereotypeInstances;
     }
 
     public static ArrayList<SignalStereotype> getSignalStereotypeInstances(Document doc) {

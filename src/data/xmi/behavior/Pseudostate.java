@@ -18,9 +18,9 @@ public class Pseudostate extends Subvertex{
     String name;
     PseudostateType pseudostateType;
 
-    public Pseudostate(Element packageElement) {
-        super(packageElement.getAttribute(ATTRIBUTE_ID));
-        this.name = packageElement.getAttribute(ATTRIBUTE_NAME);
+    public Pseudostate(Element pseudostateElement) {
+        super(pseudostateElement.getAttribute(ATTRIBUTE_ID));
+        this.name = pseudostateElement.getAttribute(ATTRIBUTE_NAME);
         if (this.name.equals("initial")) {
             pseudostateType = PseudostateType.INITIAL;
         }

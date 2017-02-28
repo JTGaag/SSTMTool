@@ -25,6 +25,6 @@ public class Subcomponent extends SlimObject{
 
     @Override
     public String toSlimString() {
-        return name + ": " + referenceComponent.getSlimComponentTypeName() + " " + referenceComponent.getImplementationName();
+        return name + ": " + referenceComponent.getSlimComponentTypeName() + " " + referenceComponent.getImplementationName() + ";";
     }
 }
