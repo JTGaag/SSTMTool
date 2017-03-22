@@ -1,4 +1,4 @@
-package data.slim.internal;
+package data.slim.internal.structure;
 
 /**
  * Created by Joost on 16-Feb-17.

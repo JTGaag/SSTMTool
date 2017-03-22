@@ -76,22 +76,6 @@ public class Region extends XMIObject {
         }
     }
 
-    public void addClassPortToTriggers(ArrayList<Port> ports) {
-        for (Transition transition: transitions) {
-            if (transition.getTrigger() != null) { //Only if trigger exists
-                transition.getTrigger().addPortToTrigger(ports, null);
-            }
-        }
-    }
-
-    public void addSubcomponentPortToTriggers(ArrayList<Port> ports, Class subcomponent) {
-        for (Transition transition: transitions) {
-            if (transition.getTrigger() != null) { //Only if trigger exists
-                transition.getTrigger().addPortToTrigger(ports, subcomponent);
-            }
-        }
-    }
-
     public ArrayList<State> getStates() {
         return states;
     }

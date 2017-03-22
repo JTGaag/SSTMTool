@@ -24,6 +24,7 @@ public class Transition extends XMIObject{
 
     Trigger trigger;
     Guard guard;
+    Effect effect;
 
     public Transition(Element transitionElement) {
         super(transitionElement.getAttribute(ATTRIBUTE_ID));
@@ -33,6 +34,7 @@ public class Transition extends XMIObject{
 
         extractTrigger(transitionElement);
         extractGuard(transitionElement);
+        extractEffect(transitionElement);
     }
 
     private void extractTrigger (Element transitionElement) {
@@ -43,11 +45,19 @@ public class Transition extends XMIObject{
         }
     }
 
-    public void extractGuard (Element transitionElement) {
+    private void extractGuard (Element transitionElement) {
         NodeList guardList = transitionElement.getElementsByTagName(Guard.TAG_NAME);
         if (guardList.getLength() > 0) { //only if a trigger is there select one trigger.
             Element guardElement = (Element)guardList.item(0);
             guard = new Guard(guardElement);
+        }
+    }
+
+    private void extractEffect (Element transitionElement) {
+        NodeList effectList = transitionElement.getElementsByTagName(Effect.TAG_NAME);
+        if (effectList.getLength() > 0) { //only if a trigger is there select one trigger.
+            Element effectElement = (Element)effectList.item(0);
+            effect = new Effect(effectElement);
         }
     }
 
@@ -69,5 +79,9 @@ public class Transition extends XMIObject{
 
     public Guard getGuard() {
         return guard;
+    }
+
+    public Effect getEffect() {
+        return effect;
     }
 }

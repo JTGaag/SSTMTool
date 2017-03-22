@@ -1,4 +1,4 @@
-package data.slim.internal;
+package data.slim.internal.structure;
 
 import data.slim.SlimObject;
 import data.slim.components.Component;
@@ -8,11 +8,12 @@ import data.slim.components.Component;
  */
 public class Subcomponent extends SlimObject{
     Component referenceComponent;
-    String name;
+    String name, subcomponentId;
 
-    public Subcomponent(String name, Component referenceComponent) {
+    public Subcomponent(String name, Component referenceComponent, String propertyId) {
         this.name = name;
         this.referenceComponent = referenceComponent;
+        this.subcomponentId = propertyId;
     }
 
     public Component getReferenceComponent() {
@@ -21,6 +22,10 @@ public class Subcomponent extends SlimObject{
 
     public String getName() {
         return name;
+    }
+
+    public String getSubcomponentId() {
+        return subcomponentId;
     }
 
     @Override

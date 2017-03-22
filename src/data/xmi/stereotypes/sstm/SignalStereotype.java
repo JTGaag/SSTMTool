@@ -7,7 +7,7 @@ import org.w3c.dom.Element;
  * Created by Joost on 15-Feb-17.
  */
 public class SignalStereotype extends BlockStereotype {
-    public static final String TAG_NAME = "SSTM:Signal";
+    public static final String TAG_NAME = "SSTM.SSTM:Signal";
 
     public SignalStereotype(String id, String baseClassId) {
         super(id, baseClassId);

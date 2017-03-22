@@ -1,4 +1,4 @@
-package data.slim.internal;
+package data.slim.internal.structure;
 
 
 import data.slim.datatypes.DataType;
@@ -25,6 +25,26 @@ public class DataPort extends Port {
         sb.append(direction);
         sb.append(" data port ");
         sb.append(dataType.toSlimString());
+
+        //Properties:
+        //Begin properties
+        if (defaultValue != null) {
+            sb.append(" {");
+        }
+
+        //Defaultvalue
+        if (defaultValue != null) {
+            sb.append("Default => \"");
+            sb.append(defaultValue);
+            sb.append("\";");
+        }
+
+
+        //End properties
+        if (defaultValue != null) {
+            sb.append("}");
+        }
+
         sb.append(";");
         return sb.toString();
     }

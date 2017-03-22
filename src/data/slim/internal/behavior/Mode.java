@@ -1,10 +1,10 @@
-package data.slim.internal;
+package data.slim.internal.behavior;
 
 
 /**
  * Created by Joost on 20-Feb-17.
  */
-public class Mode extends State{
+public class Mode extends State {
 
     public Mode(data.xmi.behavior.State xmiState) {
         super(xmiState);

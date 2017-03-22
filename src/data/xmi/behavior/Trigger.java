@@ -1,10 +1,12 @@
 package data.xmi.behavior;
 
 import com.sun.istack.internal.Nullable;
+import data.xmi.OwnedBehavior;
 import data.xmi.XMIObject;
 import data.xmi.structure.Class;
 import data.xmi.structure.Port;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 
@@ -19,35 +21,35 @@ public class Trigger extends XMIObject{
     public static final String ATTRIBUTE_NAME = "name";
     public static final String ATTRIBUTE_PORT = "port";
 
-    protected String type, portId, name;
-    protected Port triggerPort;
-    protected Class triggerSubcomponent;
+    public static final String COMMENT_TAG_NAME = "ownedComment";
+    public static final String ATTRIBUTE_ANNOTATED_ELEMENT = "annotatedElement";
+
+    protected String portId, name, subcomponentId;
 
     public Trigger(Element triggerElement) {
         super(triggerElement.getAttribute(ATTRIBUTE_ID));
         this.name = triggerElement.getAttribute(ATTRIBUTE_NAME);
         this.portId = triggerElement.getAttribute(ATTRIBUTE_PORT);
+
+        getAssociatedSubcomponent(triggerElement);
     }
 
-    public void addPortToTrigger(ArrayList<Port> classPorts, @Nullable Class triggerSubcomponent) {
-        for (Port port : classPorts) {
-            if (port.getId().equals(portId)) {
-                this.triggerSubcomponent = triggerSubcomponent;
-                triggerPort = port;
-                return;
-            }
+    private void getAssociatedSubcomponent(Element triggerElement) {
+        NodeList ownedComment = triggerElement.getElementsByTagName(COMMENT_TAG_NAME);
+        if (ownedComment.getLength() > 0) {
+            this.subcomponentId = ((Element)ownedComment.item(0)).getAttribute(ATTRIBUTE_ANNOTATED_ELEMENT);
         }
-    }
-
-    public String getType() {
-        return type;
     }
 
     public String getName() {
         return name;
     }
 
-    public Port getTriggerPort() {
-        return triggerPort;
+    public String getPortId() {
+        return portId;
+    }
+
+    public String getSubcomponentId() {
+        return subcomponentId;
     }
 }

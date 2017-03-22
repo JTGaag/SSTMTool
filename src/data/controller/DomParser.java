@@ -96,7 +96,10 @@ public class DomParser {
         mainModelController.listClasses();
         mainModelController.listDataTypes();
         mainModelController.listSignals();
+        mainModelController.listEnumerations();
+        mainModelController.listClocks();
         mainModelController.listComponents();
+
 
     }
 

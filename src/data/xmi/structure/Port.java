@@ -18,6 +18,8 @@ import java.util.Objects;
  * Created by Joost on 14-Feb-17.
  */
 public class Port extends OwnedAttribute{
+
+
     public enum PortType {
         EVENT, DATA
     }
@@ -27,9 +29,14 @@ public class Port extends OwnedAttribute{
     public static final String ATTRIBUTE_TYPE = "type";
     public static final String ATTRIBUTE_AGGREGATION = "aggregation";
 
+    public static final String DEFAULT_VALUE_TAG_NAME = "defaultValue";
+    public static final String DEFAULT_VALUE_ATTRIBUTE_VALUE = "value";
+    public static final String DEFAULT_VALUE_ATTRIBUTE_INSTANCE_ID = "instance";
+
     String name, typeId, aggregation;
     PortType portType = PortType.DATA; //Default is data port
     PortDirection direction = PortDirection.UNKNOWN;
+    private String defaultValue, defaultValueId;
 
 
     //Possible stereotypes
@@ -57,6 +64,13 @@ public class Port extends OwnedAttribute{
             //TODO: connect valuetype to it
             //TODO: not true for signal case
             dataType = new Real();
+
+            //Default value id
+            if (portElement.getElementsByTagName(DEFAULT_VALUE_TAG_NAME).getLength() > 0) {
+                if (((Element)portElement.getElementsByTagName(DEFAULT_VALUE_TAG_NAME).item(0)).hasAttribute(DEFAULT_VALUE_ATTRIBUTE_INSTANCE_ID)) {
+                    defaultValueId = ((Element) portElement.getElementsByTagName(DEFAULT_VALUE_TAG_NAME).item(0)).getAttribute(DEFAULT_VALUE_ATTRIBUTE_INSTANCE_ID);
+                }
+            }
         }
 
     }
@@ -81,6 +95,10 @@ public class Port extends OwnedAttribute{
         return name;
     }
 
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
     public boolean addPossibleStereotype(FlowPortStereotype stereotype) {
         if (stereotype.getBasePortId().equals(this.getId())) {
             this.stereotypes.add(stereotype);
@@ -98,13 +116,30 @@ public class Port extends OwnedAttribute{
      * Check if type of the port is the the signal provide (using the id)
      * If it is it is an event port
      * @param signalId is of signal
-     * @return if it was the
      */
     public void setPossibleTypePort(String signalId) {
         if (this.typeId == null || Objects.equals(this.typeId, "")) return;
         if (this.typeId.equals(signalId)) {
             //this port is typed by a signal so it is an event port
             this.portType = PortType.EVENT;
+        }
+    }
+
+    /**
+     * Connect enums to port
+     * @param enums
+     */
+    public void setPossibleEnums(ArrayList<Enumeration> enums) {
+        for (Enumeration enumeration: enums) {
+            if (this.typeId.equals(enumeration.getId())) {
+                this.portType = PortType.DATA;
+                this.dataType = new data.slim.datatypes.Enumeration(enumeration);
+
+                //Do default value
+                if (defaultValueId != null) {
+                    defaultValue = enumeration.returnDefaultValue(defaultValueId);
+                }
+            }
         }
     }
 
@@ -121,15 +156,46 @@ public class Port extends OwnedAttribute{
         switch (type.getAttribute(DataType.ATTRIBUTE_HREF)) {
             case Boolean.HREF_NAME:
                 dataType = new Boolean();
+
+                //Default value boolean
+                if (portElement.getElementsByTagName(DEFAULT_VALUE_TAG_NAME).getLength() > 0) {
+                    if (((Element)portElement.getElementsByTagName(DEFAULT_VALUE_TAG_NAME).item(0)).hasAttribute(DEFAULT_VALUE_ATTRIBUTE_VALUE)) {
+                        defaultValue = ((Element) portElement.getElementsByTagName(DEFAULT_VALUE_TAG_NAME).item(0)).getAttribute(DEFAULT_VALUE_ATTRIBUTE_VALUE);
+                    } else {
+                        defaultValue = "false";
+                    }
+                }
+
                 break;
             case Integer.HREF_NAME:
                 dataType = new Integer();
+
+                //Default value integer
+                if (portElement.getElementsByTagName(DEFAULT_VALUE_TAG_NAME).getLength() > 0) {
+                    if (((Element)portElement.getElementsByTagName(DEFAULT_VALUE_TAG_NAME).item(0)).hasAttribute(DEFAULT_VALUE_ATTRIBUTE_VALUE)) {
+                        defaultValue = ((Element) portElement.getElementsByTagName(DEFAULT_VALUE_TAG_NAME).item(0)).getAttribute(DEFAULT_VALUE_ATTRIBUTE_VALUE);
+                    } else {
+                        defaultValue = "0";
+                    }
+                }
+
                 break;
             case Real.HREF_NAME:
                 dataType = new Real();
+
+                //Default value real
+                if (portElement.getElementsByTagName(DEFAULT_VALUE_TAG_NAME).getLength() > 0) {
+                    if (((Element)portElement.getElementsByTagName(DEFAULT_VALUE_TAG_NAME).item(0)).hasAttribute(DEFAULT_VALUE_ATTRIBUTE_VALUE)) {
+                        defaultValue = ((Element) portElement.getElementsByTagName(DEFAULT_VALUE_TAG_NAME).item(0)).getAttribute(DEFAULT_VALUE_ATTRIBUTE_VALUE);
+                    } else {
+                        defaultValue = "0.0";
+                    }
+                }
+
                 break;
             default:
                 break;
         }
+
     }
 }

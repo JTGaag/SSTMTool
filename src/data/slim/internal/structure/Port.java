@@ -1,4 +1,4 @@
-package data.slim.internal;
+package data.slim.internal.structure;
 
 import data.enums.PortDirection;
 import data.slim.SlimObject;
@@ -10,13 +10,15 @@ import data.slim.SlimObject;
 public class Port extends SlimObject{
     data.xmi.structure.Port xmiPort;
 
-    String name;
+    String name, portId, defaultValue;
     PortDirection direction;
 
     public Port(data.xmi.structure.Port xmiPort) {
         this.xmiPort = xmiPort;
         this.name = xmiPort.getName();
         this.direction = xmiPort.getDirection();
+        this.portId = xmiPort.getId();
+        this.defaultValue = xmiPort.getDefaultValue();
     }
 
     public String getName() {
@@ -27,8 +29,12 @@ public class Port extends SlimObject{
         return direction;
     }
 
+    public String getPortId() {
+        return portId;
+    }
+
     @Override
     public String toSlimString() {
-        return "port base class <This chould not be here!>";
+        return "port base class <This should not be here!>";
     }
 }

@@ -1,12 +1,16 @@
 package data.controller;
 
 import data.slim.components.Component;
+import data.slim.internal.structure.Clock;
 import data.xmi.stereotypes.Stereotype;
+import data.xmi.stereotypes.sstm.SstmStateStereotype;
 import data.xmi.stereotypes.sysml.BlockStereotype;
 import data.xmi.stereotypes.sysml.FlowPortStereotype;
+import data.xmi.stereotypes.sysml.StateStereotype;
 import data.xmi.stereotypes.sysml.ValueTypeStereotype;
 import data.xmi.structure.Class;
 import data.xmi.structure.DataType;
+import data.xmi.structure.Enumeration;
 import data.xmi.structure.Package;
 import data.xmi.PackagedElement;
 import org.w3c.dom.Element;
@@ -32,12 +36,16 @@ public class ModelController {
 
     NodeList packagedElementList;
 
+    //UML / SysML
     ArrayList<Package> packages = new ArrayList<>();
     ArrayList<Class> classes = new ArrayList<>();
     ArrayList<Class> signals = new ArrayList<>();
     ArrayList<DataType> dataTypes = new ArrayList<>();
+    ArrayList<Enumeration> enumerations = new ArrayList<>();
 
+    //SLIM
     ArrayList<Component> components = new ArrayList<>();
+    ArrayList<Clock> clocks = new ArrayList<>();
 
     public ModelController() {
     }
@@ -68,7 +76,13 @@ public class ModelController {
 //        typeProperties();
         transformClassesToComponents();
         createSubcomponents();
+        createClockSubcomponents();
+        finalizeTransitions();
+        finalizeConnections();
+        finalizeFlows();
+
     }
+
 
     public NodeList getPackagedElementList() {
         return packagedElementList;
@@ -113,6 +127,9 @@ public class ModelController {
                     case DataType.TYPE_NAME:
                         dataTypes.add(new DataType(element));
                         break;
+                    case Enumeration.TYPE_NAME:
+                        enumerations.add(new Enumeration(element));
+                        break;
                     default:
                         System.err.println("PackagedElement type not supported, Type: " + element.getAttribute(PackagedElement.ATTRIBUTE_TYPE));
                         break;
@@ -143,8 +160,14 @@ public class ModelController {
                 for (Class classInstance: classes) {
                     if (classInstance.addPossibleStereotypeToPorts((FlowPortStereotype)stereotype)) break;
                 }
+            } else if (stereotype instanceof SstmStateStereotype) {
+                for (Class classInstance: classes) {
+                    if (classInstance.addPossibleStereotypeToStates((SstmStateStereotype)stereotype)) break;
+                }
             }
         }
+
+
     }
 
     private void extractSignals() {
@@ -168,6 +191,12 @@ public class ModelController {
             }
 
         }
+
+        //set enums
+        for (Class cls: classes) {
+            cls.setPossibleEnums(enumerations);
+        }
+
     }
 
     /**
@@ -184,11 +213,19 @@ public class ModelController {
     }
 
     private void transformClassesToComponents() {
+        components.clear();
+        clocks.clear();
         for (Class cls: classes) {
             if (cls.isSlimComponent()) {
                 Component component = SLIMComponentCreator.createComponent(cls);
+
                 if (component != null) {
-                    components.add(component);
+                    //put clocks in separate array
+                    if (component instanceof Clock) {
+                        clocks.add((Clock)component);
+                    } else {
+                        components.add(component);
+                    }
                 }
             }
         }
@@ -197,6 +234,30 @@ public class ModelController {
     private void createSubcomponents() {
         for (Component component: components) {
             component.createSubcomponents(components);
+        }
+    }
+
+    private void createClockSubcomponents() {
+        for (Component component: components) {
+            component.createClockSubcomponents(clocks);
+        }
+    }
+
+    private void finalizeTransitions() {
+        for (Component component: components) {
+            component.finalizeTransitions();
+        }
+    }
+
+    private void finalizeConnections() {
+        for (Component component: components) {
+            component.finalizeConnections();
+        }
+    }
+
+    private void finalizeFlows() {
+        for (Component component: components) {
+            component.finalizeFlows();
         }
     }
 
@@ -249,12 +310,30 @@ public class ModelController {
         }
     }
 
+    public void listEnumerations() {
+        System.out.println("-------------------------------------------");
+        System.out.println("-----------------Enumerations-------------------");
+        System.out.println("-------------------------------------------");
+        for (Enumeration enumeration: enumerations) {
+            System.out.println(enumeration.toString());
+        }
+    }
+
     public void listComponents() {
         System.out.println("-------------------------------------------");
         System.out.println("-----------------Components----------------");
         System.out.println("-------------------------------------------");
         for (Component component: components) {
             System.out.println(component.toSlimTypeString() + "\n\n" + component.toSlimImplementationString() + "\n\n\n");
+        }
+    }
+
+    public void listClocks() {
+        System.out.println("-------------------------------------------");
+        System.out.println("-----------------Clocks----------------");
+        System.out.println("-------------------------------------------");
+        for (Clock clock: clocks) {
+            System.out.println(clock.toSlimTypeString() + "\n\n" + clock.toSlimImplementationString() + "\n\n\n");
         }
     }
 

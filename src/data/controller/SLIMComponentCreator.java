@@ -5,11 +5,10 @@ import data.slim.components.Component;
 import data.slim.components.Device;
 import data.slim.components.Processor;
 import data.slim.components.System;
-import data.xmi.stereotypes.sstm.DeviceStereotype;
-import data.xmi.stereotypes.sstm.ProcessorStereotype;
-import data.xmi.stereotypes.sstm.SLIMComponentStereotype;
-import data.xmi.stereotypes.sstm.SystemStereotype;
+import data.slim.internal.structure.Clock;
+import data.xmi.stereotypes.sstm.*;
 import data.xmi.structure.Class;
+import sun.misc.ConditionLock;
 
 /**
  * Created by Joost on 16-Feb-17.
@@ -17,7 +16,7 @@ import data.xmi.structure.Class;
  */
 public class SLIMComponentCreator {
     private enum ComponentType {
-        DATA, THREAD, BUS, DEVICE, MEMORY, PROCESSOR, SYSTEM, UNSPECIFIED
+        DATA, THREAD, BUS, DEVICE, MEMORY, PROCESSOR, SYSTEM, UNSPECIFIED, CLOCK
     }
 
     /**
@@ -44,6 +43,9 @@ public class SLIMComponentCreator {
             case PROCESSOR:
                 component = new Processor(xmiClass);
                 break;
+            case CLOCK:
+                component = new Clock(xmiClass);
+                break;
             default:
                 break;
         }
@@ -55,6 +57,7 @@ public class SLIMComponentCreator {
         if (stereotype instanceof DeviceStereotype) return ComponentType.DEVICE;
         if (stereotype instanceof SystemStereotype) return ComponentType.SYSTEM;
         if (stereotype instanceof ProcessorStereotype) return ComponentType.PROCESSOR;
+        if (stereotype instanceof ClockStereotype) return ComponentType.CLOCK;
 
         return ComponentType.UNSPECIFIED;
     }

@@ -3,10 +3,7 @@ package data.controller;
 import data.xmi.stereotypes.Stereotype;
 import data.xmi.stereotypes.oosem.NodePhysicalStereotype;
 import data.xmi.stereotypes.oosem.SystemOfInterestStereotype;
-import data.xmi.stereotypes.sstm.DeviceStereotype;
-import data.xmi.stereotypes.sstm.ProcessorStereotype;
-import data.xmi.stereotypes.sstm.SignalStereotype;
-import data.xmi.stereotypes.sstm.SystemStereotype;
+import data.xmi.stereotypes.sstm.*;
 import data.xmi.stereotypes.sysml.BlockStereotype;
 import data.xmi.stereotypes.sysml.FlowPortStereotype;
 import data.xmi.stereotypes.sysml.ValueTypeStereotype;
@@ -40,6 +37,8 @@ public class StereotypesController {
         allStereotypes.addAll(getSystemStereotypeInstances(doc));
         allStereotypes.addAll(getProcessorStereotypeInstances(doc));
         allStereotypes.addAll(getSignalStereotypeInstances(doc));
+        allStereotypes.addAll(getClockStereotypeInstances(doc));
+        allStereotypes.addAll(getSstmStateStereotypeInstances(doc)); //SSTM State stereotype
 
         return allStereotypes;
     }
@@ -174,6 +173,32 @@ public class StereotypesController {
             }
         }
         return signalStereotypeInstances;
+    }
+
+    public static ArrayList<ClockStereotype> getClockStereotypeInstances(Document doc) {
+        ArrayList<ClockStereotype> clockStereotypeInstances= new ArrayList<>();
+        NodeList clockStereotypesList = doc.getElementsByTagName(ClockStereotype.TAG_NAME);
+        for (int i=0; i<clockStereotypesList.getLength(); i++) {
+            Node clockNode = clockStereotypesList.item(i);
+            if (clockNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element clockElement = (Element)clockNode;
+                clockStereotypeInstances.add(new ClockStereotype(clockElement));
+            }
+        }
+        return clockStereotypeInstances;
+    }
+
+    public static ArrayList<SstmStateStereotype> getSstmStateStereotypeInstances(Document doc) {
+        ArrayList<SstmStateStereotype> sstmStateStereotypeInstances= new ArrayList<>();
+        NodeList sstmStateStereotypesList = doc.getElementsByTagName(SstmStateStereotype.TAG_NAME);
+        for (int i=0; i<sstmStateStereotypesList.getLength(); i++) {
+            Node sstmStateNode = sstmStateStereotypesList.item(i);
+            if (sstmStateNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element sstmStateElement = (Element)sstmStateNode;
+                sstmStateStereotypeInstances.add(new SstmStateStereotype(sstmStateElement));
+            }
+        }
+        return sstmStateStereotypeInstances;
     }
 
 }
