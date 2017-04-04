@@ -1,10 +1,9 @@
 package data.controller;
 
 import com.sun.istack.internal.Nullable;
-import data.slim.components.Component;
-import data.slim.components.Device;
-import data.slim.components.Processor;
+import data.slim.components.*;
 import data.slim.components.System;
+import data.slim.components.Thread;
 import data.slim.internal.structure.Clock;
 import data.xmi.stereotypes.sstm.*;
 import data.xmi.structure.Class;
@@ -44,7 +43,16 @@ public class SLIMComponentCreator {
                 component = new Processor(xmiClass);
                 break;
             case CLOCK:
-                component = new Clock(xmiClass);
+                component = new Clock(xmiClass, ((ClockStereotype)xmiClass.getSLIMComponentStereotype()).getTimeUnit());
+                break;
+            case BUS:
+                component = new Bus(xmiClass);
+                break;
+            case THREAD:
+                component = new Thread(xmiClass);
+                break;
+            case MEMORY:
+                component = new Memory(xmiClass);
                 break;
             default:
                 break;
@@ -58,6 +66,10 @@ public class SLIMComponentCreator {
         if (stereotype instanceof SystemStereotype) return ComponentType.SYSTEM;
         if (stereotype instanceof ProcessorStereotype) return ComponentType.PROCESSOR;
         if (stereotype instanceof ClockStereotype) return ComponentType.CLOCK;
+        if (stereotype instanceof BusStereotype) return ComponentType.BUS;
+        if (stereotype instanceof ThreadStereotype) return ComponentType.THREAD;
+        if (stereotype instanceof MemoryStereotype) return ComponentType.MEMORY;
+
 
         return ComponentType.UNSPECIFIED;
     }

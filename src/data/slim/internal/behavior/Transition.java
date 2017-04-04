@@ -3,6 +3,7 @@ package data.slim.internal.behavior;
 import com.sun.istack.internal.Nullable;
 import data.slim.SlimObject;
 import data.slim.components.Component;
+import data.slim.error.ErrorEvent;
 import data.slim.internal.behavior.State;
 import data.slim.internal.structure.EventPort;
 import data.slim.internal.structure.Port;
@@ -32,6 +33,12 @@ public class Transition extends SlimObject{
     public void finalizeTrigger(Port port, @Nullable Subcomponent subcomponent) {
         if (trigger != null) {
             trigger.finalize(port, subcomponent);
+        }
+    }
+
+    public void finalizeErrorTrigger(ErrorEvent errorEvent) {
+        if (trigger != null) {
+            trigger.finalizeError(errorEvent);
         }
     }
 

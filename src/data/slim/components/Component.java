@@ -1,12 +1,15 @@
 package data.slim.components;
 
 import data.slim.SlimObject;
+import data.slim.error.ErrorComponent;
+import data.slim.error.ErrorEffect;
 import data.slim.internal.behavior.Mode;
 import data.slim.internal.behavior.State;
 import data.slim.internal.behavior.Transition;
 import data.slim.internal.structure.*;
 import data.slim.internal.structure.Flow;
 import data.slim.internal.structure.Port;
+import data.slim.properties.PatternProperty;
 import data.xmi.OwnedConnector;
 import data.xmi.behavior.Region;
 import data.xmi.behavior.StateMachine;
@@ -27,6 +30,8 @@ public class Component extends SlimObject{
     protected String name;
     protected String slimComponentTypeName = "unknown";
 
+    boolean fdirComponent;
+
     ArrayList<DataPort> dataPorts = new ArrayList<>();
     ArrayList<EventPort> eventPorts = new ArrayList<>();
     ArrayList<Port> ports = new ArrayList<>();
@@ -40,6 +45,9 @@ public class Component extends SlimObject{
 
     ArrayList<Transition> transitions = new ArrayList<>();
 
+    ArrayList<ErrorEffect> errorEffects = new ArrayList<>();
+    ArrayList<PatternProperty> patternProperties = new ArrayList<>();
+
     /**
      * Constructor
      * @param baseXmiClass
@@ -47,11 +55,26 @@ public class Component extends SlimObject{
     public Component(Class baseXmiClass) {
         this.baseXmiClass = baseXmiClass;
         this.name = baseXmiClass.getName();
+        this.fdirComponent = baseXmiClass.isFdirComponent();
         initPorts();
         initFlows();
         initConnections();
         initStates();
         initTransitions();
+        initErrorEffects();
+        initPatternProperties();
+    }
+
+    private void initErrorEffects() {
+        for (data.xmi.error.ErrorEffect errorEffect: baseXmiClass.getErrorEffects()) {
+            errorEffects.add(new ErrorEffect(errorEffect));
+        }
+    }
+
+    private void initPatternProperties() {
+        for (data.xmi.properties.PatternProperty patternProperty: baseXmiClass.getPatternProperties()) {
+            patternProperties.add(new PatternProperty(patternProperty));
+        }
     }
 
 
@@ -74,7 +97,12 @@ public class Component extends SlimObject{
                 }
             }
         }
+    }
 
+    public void finalizeErrorEffects(ArrayList<ErrorComponent> errorModels) {
+        for (ErrorEffect errorEffect: errorEffects) {
+            errorEffect.finalize(errorModels, ports);
+        }
     }
 
     private void initPorts() {
@@ -165,6 +193,7 @@ public class Component extends SlimObject{
 
         for (Connection connection: connections) {
             connection.finalizePortsAndSubcomponents(allPorts, subcomponents);
+            connection.finalizeSubcomponentsForAccess(subcomponents);
         }
 
         for (Connection connection: connections) {
@@ -208,6 +237,10 @@ public class Component extends SlimObject{
         return (subcomponents.size() == 0);
     }
 
+    public boolean hasProperties() {
+        return (fdirComponent || hasAccessProperties() || hasErrorProperties() || hasPatternProperties());
+    }
+
     /**
      * Return the implementation name
      * By default it is the type name with ".Imp" added
@@ -224,6 +257,52 @@ public class Component extends SlimObject{
 
     public String getSlimComponentTypeName() {
         return slimComponentTypeName;
+    }
+
+    private boolean hasPortConnections() {
+        for (Connection connection: connections) {
+            if (connection.isPortConnection()) return true;
+        }
+        return false;
+    }
+
+    private boolean hasAccessProperties() {
+        for (Connection connection: connections) {
+            if (connection.isAccessConnection()) return true;
+        }
+        return false;
+    }
+
+    private boolean hasPatternProperties() {
+        return patternProperties.size() > 0;
+    }
+
+    private boolean hasErrorProperties() {
+        return (errorEffects.size()>0);
+    }
+
+    private ArrayList<ArrayList<Connection>> getSortedAccessList(){
+        ArrayList<ArrayList<Connection>> sortedConnections = new ArrayList<>();
+
+        for (Connection connection: connections) {
+            if (connection.isAccessConnection()) {
+                boolean inList = false;
+                for (ArrayList<Connection> connections: sortedConnections) {
+                    if (connections.size() > 0 && connections.get(0).getSourceSubcomponentName().equals(connection.getSourceSubcomponentName())) {
+                        connections.add(connection);
+                        inList = true;
+                    }
+                }
+
+                if (!inList) {
+                    ArrayList<Connection> newConnections = new ArrayList<>();
+                    newConnections.add(connection);
+                    sortedConnections.add(newConnections);
+                }
+            }
+        }
+
+        return sortedConnections;
     }
 
     @Override
@@ -246,8 +325,10 @@ public class Component extends SlimObject{
             }
         }
 
+        if (fdirComponent) sb.append("\tproperties\n\t\tFDIR => true;\n");
+
         //End tag
-        sb.append("end " + name + ";");
+        sb.append("end ").append(name).append(";");
         return sb.toString();
     }
 
@@ -255,7 +336,7 @@ public class Component extends SlimObject{
     public String toSlimImplementationString() {
         StringBuilder sb = new StringBuilder();
         //Begin tag
-        sb.append(slimComponentTypeName + " implementation " + getImplementationName() + "\n");
+        sb.append(slimComponentTypeName).append(" implementation ").append(getImplementationName()).append("\n");
 
         //Sub components
         if (subcomponents.size() > 0 || clockSubcomponents.size() > 0) {
@@ -264,30 +345,30 @@ public class Component extends SlimObject{
 
         if (clockSubcomponents.size() > 0 ){
             for (ClockSubcomponent clockSubcomponent: clockSubcomponents) {
-                sb.append("\t\t" + clockSubcomponent.toSlimString() + "\n");
+                sb.append("\t\t").append(clockSubcomponent.toSlimString()).append("\n");
             }
         }
 
         if (subcomponents.size() > 0) {
             for (Subcomponent subcomponent : subcomponents) {
-                sb.append("\t\t" + subcomponent.toSlimString() + "\n");
+                sb.append("\t\t").append(subcomponent.toSlimString()).append("\n");
             }
         }
 
         //Connection and Flow header
-        if (connections.size() > 0 || flows.size() > 0) {
+        if (hasPortConnections() || flows.size() > 0) {
             sb.append("\tconnections\n");
         }
         //Connections
-        if (connections.size() > 0) {
+        if (hasPortConnections()) {
             for (Connection connection: connections) {
-                sb.append("\t\t" + connection.toSlimString() + "\n");
+                if (connection.isPortConnection()) sb.append("\t\t").append(connection.toSlimString()).append("\n");
             }
         }
         //Flows
         if (flows.size() > 0) {
             for (Flow flow: flows) {
-                sb.append("\t\t" + flow.toSlimString() + "\n");
+                sb.append("\t\t").append(flow.toSlimString()).append("\n");
             }
         }
 
@@ -297,13 +378,13 @@ public class Component extends SlimObject{
             if (isAtomic()) {
                 sb.append("\tstates\n");
                 for (State state: states) {
-                    sb.append("\t\t" + state.toSlimString() + "\n");
+                    sb.append("\t\t").append(state.toSlimString()).append("\n");
                 }
             } else {
                 sb.append("\tmodes\n");
                 for (State state: states) {
                     Mode mode = new Mode(state);
-                    sb.append("\t\t" + mode.toSlimString() + "\n");
+                    sb.append("\t\t").append(mode.toSlimString()).append("\n");
                 }
             }
 
@@ -314,12 +395,57 @@ public class Component extends SlimObject{
         if (transitions.size() > 0) {
             sb.append("\ttransitions\n");
             for (Transition transition: transitions) {
-                sb.append("\t\t" + transition.toSlimString() + "\n");
+                sb.append("\t\t").append(transition.toSlimString()).append("\n");
             }
         }
 
+        //Properties
+        if (hasProperties()) sb.append("\tproperties\n");
+
+        if (fdirComponent) sb.append("\t\tFDIR => true;\n");
+
+        if (hasAccessProperties()) {
+            for (ArrayList<Connection> connections: getSortedAccessList()) {
+                if (connections.size() > 0) {
+                    sb.append("\t\tAccesses => (reference(").append(connections.get(0).getSourceSubcomponentName()).append(")) applies to ");
+                    for (Connection connection: connections) {
+                        if (connections.indexOf(connection) != 0) sb.append(", ");
+                        sb.append(connection.getTargetSubcomponentName());
+                    }
+                    sb.append(";\n");
+                }
+            }
+        }
+
+        if (hasErrorProperties()) {
+            //First error effect error model is error model
+            //TODO: Improve if more error models can be added to a single component
+            sb.append("\t\tErrorModel => classifier(").append(errorEffects.get(0).getErrorModelName()).append(");\n");
+            sb.append("\t\tFaultEffects => (");
+            for (ErrorEffect errorEffect: errorEffects) {
+                sb.append(errorEffect.toSlimString());
+                if (errorEffects.indexOf(errorEffect) != (errorEffects.size()-1)) sb.append(",\n");
+            }
+            sb.append(");\n");
+        }
+
+        //Pattern properties
+        if (hasPatternProperties()) {
+            sb.append("\t\tPatterns => (\n");
+
+            for (PatternProperty patternProperty: patternProperties) {
+                sb.append("\t\t\t").append(patternProperty.toSlimString());
+                if (patternProperties.indexOf(patternProperty) != (patternProperties.size()-1)) {
+                    sb.append(",");
+                }
+                sb.append("\n");
+            }
+
+            sb.append("\t\t);\n");
+        }
+
         //End tag
-        sb.append("end " + getImplementationName() + ";");
+        sb.append("end ").append(getImplementationName()).append(";");
         return sb.toString();
     }
 }

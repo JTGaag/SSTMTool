@@ -1,8 +1,14 @@
 package data.controller;
 
 import data.slim.components.Component;
+import data.slim.error.ErrorComponent;
 import data.slim.internal.structure.Clock;
 import data.xmi.stereotypes.Stereotype;
+import data.xmi.stereotypes.error.ErrorEffectStereotype;
+import data.xmi.stereotypes.error.ErrorEventStereotype;
+import data.xmi.stereotypes.error.ErrorStateStereotype;
+import data.xmi.stereotypes.fdir.FdirPortStereotype;
+import data.xmi.stereotypes.properties.PatternPropertyStereotype;
 import data.xmi.stereotypes.sstm.SstmStateStereotype;
 import data.xmi.stereotypes.sysml.BlockStereotype;
 import data.xmi.stereotypes.sysml.FlowPortStereotype;
@@ -45,6 +51,7 @@ public class ModelController {
 
     //SLIM
     ArrayList<Component> components = new ArrayList<>();
+    ArrayList<ErrorComponent> errorComponents = new ArrayList<>();
     ArrayList<Clock> clocks = new ArrayList<>();
 
     public ModelController() {
@@ -80,8 +87,9 @@ public class ModelController {
         finalizeTransitions();
         finalizeConnections();
         finalizeFlows();
-
+        finalizeErrorEffects();
     }
+
 
 
     public NodeList getPackagedElementList() {
@@ -160,9 +168,25 @@ public class ModelController {
                 for (Class classInstance: classes) {
                     if (classInstance.addPossibleStereotypeToPorts((FlowPortStereotype)stereotype)) break;
                 }
-            } else if (stereotype instanceof SstmStateStereotype) {
+            } else if (stereotype instanceof SstmStateStereotype || stereotype instanceof ErrorStateStereotype) {
                 for (Class classInstance: classes) {
-                    if (classInstance.addPossibleStereotypeToStates((SstmStateStereotype)stereotype)) break;
+                    if (classInstance.addPossibleStereotypeToStates((StateStereotype)stereotype)) break;
+                }
+            } else if (stereotype instanceof FdirPortStereotype) {
+                for (Class classInstance: classes) {
+                    if (classInstance.addPossibleFDIRStereotypeToPorts((FdirPortStereotype) stereotype)) break;
+                }
+            } else if (stereotype instanceof ErrorEventStereotype) {
+                for (Class classInstance: classes) {
+                    if (classInstance.isSlimErrorComponent() && classInstance.addPossibleErrorEventStereotypeToPorts((ErrorEventStereotype) stereotype)) break;
+                }
+            } else if (stereotype instanceof ErrorEffectStereotype) {
+                for (Class classInstance: classes) {
+                    if (classInstance.addPossibleErrorEffects((ErrorEffectStereotype) stereotype)) break;
+                }
+            } else if (stereotype instanceof PatternPropertyStereotype) {
+                for (Class classInstance: classes) {
+                    if (classInstance.addPossiblePatternProperties((PatternPropertyStereotype) stereotype)) break;
                 }
             }
         }
@@ -228,6 +252,10 @@ public class ModelController {
                     }
                 }
             }
+
+            if (cls.isSlimErrorComponent()) {
+                errorComponents.add(new ErrorComponent(cls));
+            }
         }
     }
 
@@ -240,6 +268,9 @@ public class ModelController {
     private void createClockSubcomponents() {
         for (Component component: components) {
             component.createClockSubcomponents(clocks);
+        }
+        for (ErrorComponent errorComponent: errorComponents) {
+            errorComponent.createClockSubcomponents(clocks);
         }
     }
 
@@ -261,14 +292,53 @@ public class ModelController {
         }
     }
 
-    public String getSlimText() {
+
+    private void finalizeErrorEffects() {
+        for (Component component: components) {
+            component.finalizeErrorEffects(errorComponents);
+        }
+    }
+
+    public String getSlimTextOrderd() {
         System.out.println("Get SLIM in model controller parser");
         StringBuilder sb = new StringBuilder();
+        //Nominal Components
         for (Component component: components) {
             sb.append(component.toSlimTypeString());
             sb.append("\n\n");
             sb.append(component.toSlimImplementationString());
             sb.append("\n\n\n");
+        }
+
+        //Errors
+        for (ErrorComponent errorComponent: errorComponents) {
+            sb.append(errorComponent.toSlimTypeString()).append("\n\n");
+            sb.append(errorComponent.toSlimImplementationString()).append("\n\n\n");
+        }
+        System.out.println(sb.toString());
+        return sb.toString();
+    }
+
+    public String getSlimTextTypesFirst() {
+        System.out.println("Get SLIM in model controller parser");
+        StringBuilder sb = new StringBuilder();
+        //Nominal components
+        for (Component component: components) {
+            sb.append(component.toSlimTypeString());
+            sb.append("\n\n");
+        }
+        sb.append("\n\n");
+        for (Component component: components) {
+            sb.append(component.toSlimImplementationString());
+            sb.append("\n\n");
+        }
+
+        //Errors
+        for (ErrorComponent errorComponent: errorComponents) {
+            sb.append(errorComponent.toSlimTypeString()).append("\n\n");
+        }
+        for (ErrorComponent errorComponent: errorComponents) {
+            sb.append(errorComponent.toSlimImplementationString()).append("\n\n");
         }
         System.out.println(sb.toString());
         return sb.toString();
@@ -325,6 +395,15 @@ public class ModelController {
         System.out.println("-------------------------------------------");
         for (Component component: components) {
             System.out.println(component.toSlimTypeString() + "\n\n" + component.toSlimImplementationString() + "\n\n\n");
+        }
+    }
+
+    public void listErrorComponents() {
+        System.out.println("-------------------------------------------");
+        System.out.println("--------------Error Components-------------");
+        System.out.println("-------------------------------------------");
+        for (ErrorComponent errorComponent: errorComponents) {
+            System.out.println(errorComponent.toSlimTypeString() + "\n\n" + errorComponent.toSlimImplementationString() + "\n\n\n");
         }
     }
 

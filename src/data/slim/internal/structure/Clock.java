@@ -9,10 +9,17 @@ import data.xmi.structure.Class;
  */
 public class Clock extends Component{
 
-    public Clock(Class baseXmiClass) {
+    String timeUnit;
+
+    public Clock(Class baseXmiClass, String timeUnit) {
         super(baseXmiClass);
         this.baseXmiClass = baseXmiClass;
         this.slimComponentTypeName = "clock";
+        this.timeUnit = timeUnit;
+    }
+
+    public String getTimeUnit() {
+        return timeUnit;
     }
 
     @Override

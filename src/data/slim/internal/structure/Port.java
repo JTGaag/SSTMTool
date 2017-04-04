@@ -12,6 +12,7 @@ public class Port extends SlimObject{
 
     String name, portId, defaultValue;
     PortDirection direction;
+    boolean fdirAlarm, fdirObservable;
 
     public Port(data.xmi.structure.Port xmiPort) {
         this.xmiPort = xmiPort;
@@ -19,6 +20,8 @@ public class Port extends SlimObject{
         this.direction = xmiPort.getDirection();
         this.portId = xmiPort.getId();
         this.defaultValue = xmiPort.getDefaultValue();
+        this.fdirAlarm = xmiPort.isFdirAlarm();
+        this.fdirObservable = xmiPort.isFdirObservable();
     }
 
     public String getName() {
@@ -31,6 +34,10 @@ public class Port extends SlimObject{
 
     public String getPortId() {
         return portId;
+    }
+
+    public boolean hasProperties() {
+        return (defaultValue != null || fdirAlarm || fdirObservable);
     }
 
     @Override

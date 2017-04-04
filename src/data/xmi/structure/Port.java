@@ -7,6 +7,10 @@ import data.slim.datatypes.DataType;
 import data.slim.datatypes.Integer;
 import data.xmi.OwnedAttribute;
 import data.xmi.stereotypes.Stereotype;
+import data.xmi.stereotypes.error.ErrorEventStereotype;
+import data.xmi.stereotypes.fdir.AlarmStereotype;
+import data.xmi.stereotypes.fdir.FdirPortStereotype;
+import data.xmi.stereotypes.fdir.ObservableStereotype;
 import data.xmi.stereotypes.sysml.FlowPortStereotype;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -18,7 +22,6 @@ import java.util.Objects;
  * Created by Joost on 14-Feb-17.
  */
 public class Port extends OwnedAttribute{
-
 
     public enum PortType {
         EVENT, DATA
@@ -37,6 +40,12 @@ public class Port extends OwnedAttribute{
     PortType portType = PortType.DATA; //Default is data port
     PortDirection direction = PortDirection.UNKNOWN;
     private String defaultValue, defaultValueId;
+    private boolean fdirAlarm = false;
+    private boolean fdirObservable = false;
+
+    //Error event stuff
+    private boolean errorEvent = false;
+    private String errorProbability, errorTimeUnit;
 
 
     //Possible stereotypes
@@ -99,14 +108,73 @@ public class Port extends OwnedAttribute{
         return defaultValue;
     }
 
+    public boolean isFdirAlarm() {
+        return fdirAlarm;
+    }
+
+    public boolean isFdirObservable() {
+        return fdirObservable;
+    }
+
+    public boolean isErrorEvent() {
+        return errorEvent;
+    }
+
+    public String getErrorProbability() {
+        return errorProbability;
+    }
+
+    public String getErrorTimeUnit() {
+        return errorTimeUnit;
+    }
+
+    /**
+     * Add flowport stereotype to port
+     * Adding direction information to the port
+     * @param stereotype
+     * @return
+     */
     public boolean addPossibleStereotype(FlowPortStereotype stereotype) {
         if (stereotype.getBasePortId().equals(this.getId())) {
             this.stereotypes.add(stereotype);
             //Add direction if stereotype is flowPort (has direction parameter in stereotype)
-            if (stereotype instanceof FlowPortStereotype) {
-                this.direction = ((FlowPortStereotype) stereotype).getDirection();
-            }
+            this.direction = ((FlowPortStereotype) stereotype).getDirection();
 
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Adding possible FDIR stereotypes to ports
+     * -Alarm
+     * -Observable
+     * @param stereotype
+     * @return
+     */
+    public boolean addPossibleFDIRStereotypes(FdirPortStereotype stereotype) {
+        if (stereotype.getBasePortId().equals(this.getId())) {
+            this.stereotypes.add(stereotype);
+
+            if (stereotype instanceof AlarmStereotype) fdirAlarm = true;
+            if (stereotype instanceof ObservableStereotype) fdirObservable = true;
+
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Adding possible error events to port
+     * @param errorEventStereotype
+     * @return
+     */
+    public boolean addPossibleErrorEventStereotypes(ErrorEventStereotype errorEventStereotype) {
+        if (errorEventStereotype.getBasePortId().equals(this.getId())) {
+            this.stereotypes.add(errorEventStereotype);
+            errorEvent = true;
+            errorProbability = errorEventStereotype.getProbability();
+            errorTimeUnit = errorEventStereotype.getTimeUnit();
             return true;
         }
         return false;

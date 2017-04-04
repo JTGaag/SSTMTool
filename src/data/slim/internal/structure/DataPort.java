@@ -28,21 +28,28 @@ public class DataPort extends Port {
 
         //Properties:
         //Begin properties
-        if (defaultValue != null) {
+        if (hasProperties()) {
             sb.append(" {");
         }
 
         //Defaultvalue
         if (defaultValue != null) {
-            sb.append("Default => \"");
+            sb.append(" Default => \"");
             sb.append(defaultValue);
             sb.append("\";");
         }
 
+        if (fdirObservable) {
+            sb.append(" Observable => true;");
+        }
+
+        if (fdirAlarm) {
+            sb.append(" Alarm => true;");
+        }
 
         //End properties
-        if (defaultValue != null) {
-            sb.append("}");
+        if (hasProperties()) {
+            sb.append(" }");
         }
 
         sb.append(";");

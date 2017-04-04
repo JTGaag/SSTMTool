@@ -7,12 +7,21 @@ import data.xmi.OwnedConnector;
 import data.xmi.PackagedElement;
 import data.xmi.behavior.State;
 import data.xmi.behavior.StateMachine;
+import data.xmi.error.ErrorEffect;
+import data.xmi.properties.PatternProperty;
 import data.xmi.stereotypes.Stereotype;
+import data.xmi.stereotypes.error.ErrorEffectStereotype;
+import data.xmi.stereotypes.error.ErrorEventStereotype;
+import data.xmi.stereotypes.error.ErrorModelStereotype;
+import data.xmi.stereotypes.fdir.FdirComponentStereotype;
+import data.xmi.stereotypes.fdir.FdirPortStereotype;
+import data.xmi.stereotypes.properties.PatternPropertyStereotype;
 import data.xmi.stereotypes.sstm.SLIMComponentStereotype;
 import data.xmi.stereotypes.sstm.SignalStereotype;
 import data.xmi.stereotypes.sstm.SstmStateStereotype;
 import data.xmi.stereotypes.sysml.BlockStereotype;
 import data.xmi.stereotypes.sysml.FlowPortStereotype;
+import data.xmi.stereotypes.sysml.StateStereotype;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -26,7 +35,7 @@ import java.util.ArrayList;
 public class Class extends PackagedElement {
     public static final String TYPE_NAME = "uml:Class";
 
-    protected String name;
+    protected String name, errorStereotypeId;
     private ArrayList<Property> properties = new ArrayList<>();
     private ArrayList<Port> ports = new ArrayList<>();
     private ArrayList<Flow> flows = new ArrayList<>();
@@ -34,8 +43,12 @@ public class Class extends PackagedElement {
 
     //Possible stereotypes
     private ArrayList<Stereotype> stereotypes = new ArrayList<>();
+    private ArrayList<ErrorEffect> errorEffects = new ArrayList<>();
+    private ArrayList<PatternProperty> patternProperties = new ArrayList<>();
 
     private StateMachine stateMachine;
+
+    private boolean fdirComponent = false;
 
     /**
      * Constructor
@@ -148,9 +161,29 @@ public class Class extends PackagedElement {
         return stateMachine;
     }
 
+    public boolean isFdirComponent() {
+        return fdirComponent;
+    }
+
+    public String getErrorStereotypeId() {
+        return errorStereotypeId;
+    }
+
+    public ArrayList<ErrorEffect> getErrorEffects() {
+        return errorEffects;
+    }
+
+    public ArrayList<PatternProperty> getPatternProperties() {
+        return patternProperties;
+    }
+
     public boolean addPossibleStereotype(BlockStereotype stereotype) {
         if (stereotype.getBaseClassId().equals(this.getId())) {
             this.stereotypes.add(stereotype);
+
+            if (stereotype instanceof FdirComponentStereotype) fdirComponent = true;
+            if (stereotype instanceof ErrorModelStereotype) errorStereotypeId = stereotype.getId();
+
             return true;
         }
         return false;
@@ -163,15 +196,29 @@ public class Class extends PackagedElement {
         return false;
     }
 
+    public boolean addPossibleFDIRStereotypeToPorts(FdirPortStereotype stereotype) {
+        for (Port port: ports) {
+            if(port.addPossibleFDIRStereotypes(stereotype)) return true;
+        }
+        return false;
+    }
+
+    public boolean addPossibleErrorEventStereotypeToPorts(ErrorEventStereotype errorEventStereotype) {
+        for (Port port: ports) {
+            if(port.addPossibleErrorEventStereotypes(errorEventStereotype)) return true;
+        }
+        return false;
+    }
+
     /**
      * Add stereotypes to states
-     * @param sstmStateStereotype
+     * @param stateStereotype
      * @return
      */
-    public boolean addPossibleStereotypeToStates(SstmStateStereotype sstmStateStereotype) {
+    public boolean addPossibleStereotypeToStates(StateStereotype stateStereotype) {
         if (stateMachine == null || stateMachine.getRegion() == null) return false;
         for (State state: stateMachine.getRegion().getStates()) {
-            if (state.addPossibleStereotype(sstmStateStereotype)) return true;
+            if (state.addPossibleStereotype(stateStereotype)) return true;
         }
         return false;
     }
@@ -194,6 +241,28 @@ public class Class extends PackagedElement {
         }
     }
 
+    public boolean addPossibleErrorEffects(ErrorEffectStereotype errorEffectStereotype) {
+        for (Property property: properties) {
+            if (property.getId().equals(errorEffectStereotype.getBasePropertyId())) { //property is error effect
+                errorEffects.add(new ErrorEffect(errorEffectStereotype));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean addPossiblePatternProperties(PatternPropertyStereotype patternPropertyStereotype) {
+        for (Property property: properties) {
+            if (property.getId().equals(patternPropertyStereotype.getBasePropertyId())) { //property is error effect
+                patternProperties.add(new PatternProperty(property, patternPropertyStereotype));
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
     /**
      * Function to derermine if class is a signal block
      * @return
@@ -215,6 +284,17 @@ public class Class extends PackagedElement {
     public boolean isSlimComponent() {
         for (Stereotype stereotype: stereotypes) {
             if (stereotype instanceof SLIMComponentStereotype) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Function to determine if class is a SLIM ERROR component
+     * @return if class is (and can be transformed to) SLIM component
+     */
+    public boolean isSlimErrorComponent() {
+        for (Stereotype stereotype: stereotypes) {
+            if (stereotype instanceof ErrorModelStereotype) return true;
         }
         return false;
     }
@@ -244,6 +324,7 @@ public class Class extends PackagedElement {
                 "\n     Nr of Ports: " + ports.size() +
                 "\n     Signal?: " + isSignal() +
                 "\n     SLIM Component?: " + isSlimComponent() +
+                "\n     SLIM Error?: " + isSlimErrorComponent() +
                 "\n     Ports: \n" + stringBuilder.toString();
     }
 

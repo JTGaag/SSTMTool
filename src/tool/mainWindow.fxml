@@ -24,6 +24,7 @@
                   <Button mnemonicParsing="false" onAction="#selectOutputDirectory" prefHeight="24.0" prefWidth="152.0" text="Select output directory" />
                   <Button mnemonicParsing="false" onAction="#createOutputFile" text="Create Output file" />
                   <Button mnemonicParsing="false" onAction="#writeSlimToFile" text="Write SLIM to file" />
+                  <Button mnemonicParsing="false" onAction="#writeSlimToFileTypesFirst" text="Write SLIM to file Types first" />
                </children>
             </VBox>
             <Label fx:id="textFileLocation" text="File location" />

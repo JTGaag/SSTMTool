@@ -30,6 +30,14 @@ public class ClockSubcomponent extends SlimObject{
 
     @Override
     public String toSlimString() {
-        return name + ": data clock;";
+        StringBuilder sb = new StringBuilder();
+        sb.append(name).append(": data clock");
+        //Time Unit
+        if (referenceClock.getTimeUnit() != null) {
+            sb.append(" { TimeUnit => \"").append(referenceClock.getTimeUnit()).append("\"; }");
+        }
+
+        sb.append(";");
+        return sb.toString();
     }
 }

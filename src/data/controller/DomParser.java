@@ -99,6 +99,7 @@ public class DomParser {
         mainModelController.listEnumerations();
         mainModelController.listClocks();
         mainModelController.listComponents();
+        mainModelController.listErrorComponents();
 
 
     }
@@ -117,8 +118,12 @@ public class DomParser {
      * Quick debug fuinction (should be better on high level)
      * @return
      */
-    public String getSlimText() {
+    public String getSlimText(boolean orderedByComponent) {
         System.out.println("Get SLIM in DOM parser");
-        return mainModelController.getSlimText();
+        if (orderedByComponent) {
+            return mainModelController.getSlimTextOrderd();
+        } else {
+            return  mainModelController.getSlimTextTypesFirst();
+        }
     }
 }

@@ -6,7 +6,7 @@ import data.slim.SlimObject;
  * Created by Joost on 20-Feb-17.
  */
 public class State extends SlimObject{
-    String name, stateId, whileExpression;
+    String name, stateId, whileExpression, errorStereotypeId;
     boolean initial = false;
 
     public State(data.xmi.behavior.State xmiState) {
@@ -14,6 +14,7 @@ public class State extends SlimObject{
         this.initial = xmiState.isInitial();
         this.stateId = xmiState.getId();
         this.whileExpression = xmiState.getWhileExpression();
+        this.errorStereotypeId = xmiState.getErrorStereotypeId();
     }
 
     public State(State state) {
@@ -51,6 +52,10 @@ public class State extends SlimObject{
 
     public String getStateId() {
         return stateId;
+    }
+
+    public String getErrorStereotypeId() {
+        return errorStereotypeId;
     }
 
     public String getWhileExpression() {

@@ -73,6 +73,10 @@ public class MainController {
     }
 
     public void writeSlimToFile(ActionEvent actionEvent) {
-        ioController.writeToOutputFile(domParser.getSlimText());
+        ioController.writeToOutputFile(domParser.getSlimText(true));
+    }
+
+    public void writeSlimToFileTypesFirst(ActionEvent actionEvent) {
+        ioController.writeToOutputFile(domParser.getSlimText(false));
     }
 }
