@@ -2,9 +2,12 @@ package tool;
 
 import data.controller.DomParser;
 import data.controller.IOController;
+import data.controller.ModelController;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
@@ -15,13 +18,18 @@ public class MainController {
     public Label helloWorld;
     public TextArea textArea;
     public Label textFileLocation;
-    private DomParser domParser = new DomParser();
+    @FXML private TextField fileNameTextField;
     private IOController ioController = new IOController();
 
-    public void sayHelloWorld(ActionEvent actionEvent) {
-        int random = (new Random()).nextInt(10000);
-        helloWorld.setText("Hello World! You are user: " + random);
-    }
+    private ModelController.ModelControllerInterface modelControllerInterface = new ModelController.ModelControllerInterface() {
+        @Override
+        public void writeToLog(String logString) {
+            textArea.appendText(logString+"\n");
+        }
+    };
+
+
+    private DomParser domParser = new DomParser(modelControllerInterface);
 
     public void openPapyrusModelSelector(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
@@ -31,7 +39,6 @@ public class MainController {
         );
         File selectedFile = fileChooser.showOpenDialog(null);
         if (selectedFile != null) {
-            helloWorld.setText("File selected: " + selectedFile.getName());
             try {
                 StringBuilder stringBuilder = new StringBuilder();
                 BufferedReader in = new BufferedReader(new FileReader(selectedFile));
@@ -41,7 +48,7 @@ public class MainController {
                     stringBuilder.append("\n");
                 }
                 in.close();
-                textArea.setText(stringBuilder.toString());
+                textArea.appendText("SysML file opened\n");
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -62,21 +69,31 @@ public class MainController {
         if (outputDirectory != null) {
             textFileLocation.setText(outputDirectory.getAbsolutePath());
             ioController.setOutputDirectory(outputDirectory);
+            textArea.appendText("Directory selected\n");
         }
     }
 
     public void createOutputFile(ActionEvent actionEvent) {
-        boolean success = ioController.createOutputFile();
-        if (success) {
-            textFileLocation.setText(ioController.getOutputFile().getAbsolutePath());
-        }
+        textArea.setText(fileNameTextField.getText());
+
     }
 
     public void writeSlimToFile(ActionEvent actionEvent) {
-        ioController.writeToOutputFile(domParser.getSlimText(true));
+        boolean success = ioController.createOutputFile(fileNameTextField.getText());
+        if (success) {
+            textFileLocation.setText(ioController.getOutputFile().getAbsolutePath());
+            ioController.writeToOutputFile(domParser.getSlimText(true));
+            textArea.appendText("SLIM code written to file\n");
+        }
+
     }
 
     public void writeSlimToFileTypesFirst(ActionEvent actionEvent) {
-        ioController.writeToOutputFile(domParser.getSlimText(false));
+        boolean success = ioController.createOutputFile(fileNameTextField.getText());
+        if (success) {
+            textFileLocation.setText(ioController.getOutputFile().getAbsolutePath());
+            ioController.writeToOutputFile(domParser.getSlimText(false));
+            textArea.appendText("SLIM code written to file\n");
+        }
     }
 }

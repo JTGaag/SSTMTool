@@ -42,6 +42,24 @@ public class State extends SlimObject{
         return sb.toString();
     }
 
+    public String toErrorSlimString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(name);
+        sb.append(": ");
+        if (initial) sb.append("initial ");
+        else sb.append("error ");
+        sb.append("state");
+
+        if (whileExpression != null) {
+            sb.append(" while (");
+            sb.append(whileExpression);
+            sb.append(")");
+        }
+
+        sb.append(";");
+        return sb.toString();
+    }
+
     public String getName() {
         return name;
     }

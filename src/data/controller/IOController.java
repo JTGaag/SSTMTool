@@ -24,6 +24,20 @@ public class IOController {
         return true;
     }
 
+    public boolean createOutputFile(String fileName) {
+        if (fileName == null || fileName.trim().equals("")) fileName = this.fileName;
+        if (outputDirectory == null) return false;
+        outputFile = new File(outputDirectory.getAbsolutePath() + File.separator + fileName + "." + fileExtension);
+        System.out.println(outputFile.getAbsolutePath());
+        try {
+            outputFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     public File getOutputDirectory() {
         return outputDirectory;
     }

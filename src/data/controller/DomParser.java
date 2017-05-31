@@ -33,12 +33,14 @@ public class DomParser {
     ArrayList<Class> classes = new ArrayList<>();
     ArrayList<Stereotype> stereotypeInstances = new ArrayList<>();
 
-    ModelController mainModelController = new ModelController();
+    ModelController mainModelController;
 
     /**
      * Constructor setting everything up
      */
-    public DomParser() {
+    public DomParser(ModelController.ModelControllerInterface modelControllerInterface) {
+        mainModelController = new ModelController(modelControllerInterface);
+
         dbFactory = DocumentBuilderFactory.newInstance();
         try {
             dBuilder = dbFactory.newDocumentBuilder();

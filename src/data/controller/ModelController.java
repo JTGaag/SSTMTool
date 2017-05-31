@@ -37,6 +37,12 @@ import java.util.Iterator;
  *
  */
 public class ModelController {
+
+    public interface ModelControllerInterface {
+        void writeToLog(String logString);
+    }
+
+
     Element model;
     ArrayList<Stereotype> stereotypes = new ArrayList<>();
 
@@ -54,7 +60,10 @@ public class ModelController {
     ArrayList<ErrorComponent> errorComponents = new ArrayList<>();
     ArrayList<Clock> clocks = new ArrayList<>();
 
-    public ModelController() {
+    ModelControllerInterface modelControllerInterface;
+
+    public ModelController(ModelControllerInterface modelControllerInterface) {
+        this.modelControllerInterface = modelControllerInterface;
     }
 
     public Element getModel() {
@@ -147,6 +156,8 @@ public class ModelController {
 
 
         }
+
+        modelControllerInterface.writeToLog("Packaged elements categorized");
     }
 
     /**
@@ -191,7 +202,7 @@ public class ModelController {
             }
         }
 
-
+        modelControllerInterface.writeToLog("Stereotypes added to elements");
     }
 
     private void extractSignals() {
@@ -203,6 +214,8 @@ public class ModelController {
                 iterator.remove();
             }
         }
+
+        modelControllerInterface.writeToLog("Signals extracted");
     }
 
     //Type all ports
@@ -221,6 +234,7 @@ public class ModelController {
             cls.setPossibleEnums(enumerations);
         }
 
+        modelControllerInterface.writeToLog("Ports typed");
     }
 
     /**
@@ -239,6 +253,7 @@ public class ModelController {
     private void transformClassesToComponents() {
         components.clear();
         clocks.clear();
+        errorComponents.clear();
         for (Class cls: classes) {
             if (cls.isSlimComponent()) {
                 Component component = SLIMComponentCreator.createComponent(cls);
@@ -257,12 +272,16 @@ public class ModelController {
                 errorComponents.add(new ErrorComponent(cls));
             }
         }
+
+        modelControllerInterface.writeToLog("Classes transformed to SLIM components");
     }
 
     private void createSubcomponents() {
         for (Component component: components) {
             component.createSubcomponents(components);
         }
+
+        modelControllerInterface.writeToLog("Subcomponents created");
     }
 
     private void createClockSubcomponents() {
@@ -272,24 +291,32 @@ public class ModelController {
         for (ErrorComponent errorComponent: errorComponents) {
             errorComponent.createClockSubcomponents(clocks);
         }
+
+        modelControllerInterface.writeToLog("Clock subcomponents created");
     }
 
     private void finalizeTransitions() {
         for (Component component: components) {
             component.finalizeTransitions();
         }
+
+        modelControllerInterface.writeToLog("Transitions finalized");
     }
 
     private void finalizeConnections() {
         for (Component component: components) {
             component.finalizeConnections();
         }
+
+        modelControllerInterface.writeToLog("Connections finalized");
     }
 
     private void finalizeFlows() {
         for (Component component: components) {
             component.finalizeFlows();
         }
+
+        modelControllerInterface.writeToLog("Flows finalized");
     }
 
 
@@ -297,6 +324,8 @@ public class ModelController {
         for (Component component: components) {
             component.finalizeErrorEffects(errorComponents);
         }
+
+        modelControllerInterface.writeToLog("Error effects finalized");
     }
 
     public String getSlimTextOrderd() {

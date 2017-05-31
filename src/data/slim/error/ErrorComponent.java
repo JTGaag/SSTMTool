@@ -166,7 +166,7 @@ public class ErrorComponent extends SlimObject {
         if (states.size() > 0) {
             sb.append("\tstates\n");
             for (State state: states) {
-                sb.append("\t\t").append(state.toSlimString()).append("\n");
+                sb.append("\t\t").append(state.toErrorSlimString()).append("\n");
             }
         }
 

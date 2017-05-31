@@ -29,7 +29,7 @@ public class Effect extends XMIObject{
     }
 
     private void extractEffectExpression(Element effectElement) {
-        this.expressionLanguage = effectElement.getElementsByTagName(SPECIFICATION_LANGUAGE_TAG_NAME).item(0).getTextContent();
+        if (effectElement.hasAttribute(SPECIFICATION_LANGUAGE_TAG_NAME)) this.expressionLanguage = effectElement.getElementsByTagName(SPECIFICATION_LANGUAGE_TAG_NAME).item(0).getTextContent();
         this.expressionBody = effectElement.getElementsByTagName(SPECIFICATION_BODY_TAG_NAME).item(0).getTextContent();
         //Process expression
         this.expressionBody = this.expressionBody.replace("self.", "");

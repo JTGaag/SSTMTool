@@ -35,7 +35,7 @@ import java.util.ArrayList;
 public class Class extends PackagedElement {
     public static final String TYPE_NAME = "uml:Class";
 
-    protected String name, errorStereotypeId;
+    private String name, errorStereotypeId;
     private ArrayList<Property> properties = new ArrayList<>();
     private ArrayList<Port> ports = new ArrayList<>();
     private ArrayList<Flow> flows = new ArrayList<>();

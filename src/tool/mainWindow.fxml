@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -11,18 +12,21 @@
 
 <GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tool.MainController">
     <children>
-
-        <Button onAction="#sayHelloWorld" text="Hello World" />
-        <Label fx:id="helloWorld" GridPane.rowIndex="1" />
-        <TextArea fx:id="textArea" prefHeight="800.0" prefWidth="600.0" GridPane.rowIndex="3" />
-      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="2">
+        <TextArea fx:id="textArea" prefHeight="300.0" prefWidth="400.0" GridPane.rowIndex="3" />
+      <HBox prefHeight="100.0" prefWidth="900" GridPane.rowIndex="2">
          <children>
       
             <Button onAction="#openPapyrusModelSelector" prefHeight="25.0" prefWidth="140.0" text="Open Papyrus model" />
-            <VBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="179.0">
+            <VBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="300">
                <children>
                   <Button mnemonicParsing="false" onAction="#selectOutputDirectory" prefHeight="24.0" prefWidth="152.0" text="Select output directory" />
-                  <Button mnemonicParsing="false" onAction="#createOutputFile" text="Create Output file" />
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Label text="File name: " />
+                        <TextField id="fileNameTextField" fx:id="fileNameTextField" />
+                        <Label text=".slim" />
+                     </children>
+                  </HBox>
                   <Button mnemonicParsing="false" onAction="#writeSlimToFile" text="Write SLIM to file" />
                   <Button mnemonicParsing="false" onAction="#writeSlimToFileTypesFirst" text="Write SLIM to file Types first" />
                </children>
@@ -30,6 +34,11 @@
             <Label fx:id="textFileLocation" text="File location" />
          </children>
       </HBox>
+      <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../assets/TU_Delft_logo_RGB.png" />
+         </image>
+      </ImageView>
     </children>
    <columnConstraints>
       <ColumnConstraints />
